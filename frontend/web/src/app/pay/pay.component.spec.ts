@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PayComponent } from './pay.component';
 
-import { InstagramComponent } from './instagram.component';
 
-describe('InstagramComponent', () => {
-  let component: InstagramComponent;
-  let fixture: ComponentFixture<InstagramComponent>;
+describe('payComponent', () => {
+  let component: PayComponent;
+  let fixture: ComponentFixture<PayComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InstagramComponent]
+      imports: [PayComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(InstagramComponent);
+    fixture = TestBed.createComponent(PayComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

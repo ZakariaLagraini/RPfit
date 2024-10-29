@@ -5,7 +5,7 @@ import { HeroComponent } from './hero/hero.component';
 import { AppHighlightsComponent } from './app-highlights/app-highlights.component';
 import { CoachingComponent } from './coaching/coaching.component';
 import { UserReviewsComponent } from './user-reviews/user-reviews.component';
-import { InstagramComponent } from './instagram/instagram.component';
+import { PayComponent } from './pay/pay.component';
 import { NewsletterComponent } from './newsletter/newsletter.component';
 import { FooterComponent } from './footer/footer.component';
 
@@ -19,7 +19,7 @@ import { FooterComponent } from './footer/footer.component';
     AppHighlightsComponent,
     CoachingComponent,
     UserReviewsComponent,
-    InstagramComponent,
+    PayComponent,
     NewsletterComponent,
     FooterComponent
   ],
