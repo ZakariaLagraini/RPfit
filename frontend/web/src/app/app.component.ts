@@ -1,13 +1,31 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './header/header.component';
+import { HeroComponent } from './hero/hero.component';
+import { AppHighlightsComponent } from './app-highlights/app-highlights.component';
+import { CoachingComponent } from './coaching/coaching.component';
+import { UserReviewsComponent } from './user-reviews/user-reviews.component';
+import { InstagramComponent } from './instagram/instagram.component';
+import { NewsletterComponent } from './newsletter/newsletter.component';
+import { FooterComponent } from './footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [
+    RouterOutlet,
+    HeaderComponent,
+    HeroComponent,
+    AppHighlightsComponent,
+    CoachingComponent,
+    UserReviewsComponent,
+    InstagramComponent,
+    NewsletterComponent,
+    FooterComponent
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'web';
+  title = 'web-app';
 }
