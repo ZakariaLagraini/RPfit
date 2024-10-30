@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';  // Add this import
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:rpstrengh/src/screens/user_welcome_screen.dart';  // Add this import
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -35,7 +36,7 @@ class WelcomePage extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.all(15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(5),
                   ),
                 ),
                 child: Row(
@@ -54,7 +55,7 @@ class WelcomePage extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.all(15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(5),
                   ),
                 ),
                 child: Row(
@@ -88,7 +89,7 @@ class WelcomePage extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'Name',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(5),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 20,
@@ -102,7 +103,7 @@ class WelcomePage extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'Email address',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(5),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 20,
@@ -117,7 +118,7 @@ class WelcomePage extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'Password',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(5),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 20,
@@ -131,12 +132,19 @@ class WelcomePage extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const UserWelcomeScreen(),
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFFB5B5),
                     padding: const EdgeInsets.all(15),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(5),
                     ),
                   ),
                   child: const Text(
