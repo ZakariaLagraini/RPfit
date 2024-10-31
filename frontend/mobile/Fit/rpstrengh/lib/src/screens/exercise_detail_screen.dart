@@ -121,13 +121,13 @@ class ExerciseDetailScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+              child: const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    const Icon(Icons.play_arrow, color: Colors.red),
-                    const SizedBox(width: 8),
-                    const Text(
+                    Icon(Icons.play_arrow, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text(
                       'Start Workout',
                       style: TextStyle(
                         color: Colors.red,
@@ -215,7 +215,7 @@ class ExerciseDetailScreen extends StatelessWidget {
   }
 
   Widget _buildSection(String title, String content, IconData icon,
-      {Color backgroundColor = Colors.white, Color textColor = Colors.white}) {
+      {Color backgroundColor = Colors.white}) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(

@@ -9,17 +9,22 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  fl_chart: ^0.69.0
+  flutter_native_splash: ^2.4.0
 
   flutter_svg: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  
+  
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/rp_logo.svg
+    - assets/images/rp_logo.png
     - assets/images/facebook_logo.png
     - assets/images/google_logo.png
     - assets/images/body.jpg
@@ -29,4 +34,10 @@ flutter:
     - assets/images/pushup.jpg
     - assets/images/diamond_pushup.png
     - assets/images/pullup.png
+    - assets/images/beef_pumpkin.png
+    - assets/images/greens_salad.png
+    - assets/images/salmon_greens.png
+    - assets/images/avocado_toast.png
+    - assets/images/penne_pesto.png
+    - assets/images/pad_thai.png
    

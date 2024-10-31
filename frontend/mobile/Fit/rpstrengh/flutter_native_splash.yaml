@@ -1,0 +1,9 @@
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: "assets/images/rp_logo.png"
+  android: true
+  ios: true
+  android_12:
+    image: "assets/images/rp_logo.png"
+    icon_background_color: "#FFFFFF"
+  web: false

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'workout_screen.dart';
+import 'stats_screen.dart';
+import 'nutrition_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -64,6 +66,43 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 243, 33, 44),
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.restaurant_menu),
+              title: const Text('Nutrition'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NutritionScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.exit_to_app),
+              title: const Text('Exit'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -75,7 +114,12 @@ class HomePage extends StatelessWidget {
                 // Search bar and notification
                 Row(
                   children: [
-                    const Icon(Icons.menu, size: 24),
+                    Builder(
+                      builder: (context) => IconButton(
+                        icon: const Icon(Icons.menu, size: 24),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Container(
@@ -334,18 +378,7 @@ class ProgramCard extends StatelessWidget {
 }
 
 
-class StatsPage extends StatelessWidget {
-  const StatsPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Stats Page'),
-      ),
-    );
-  }
-}
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

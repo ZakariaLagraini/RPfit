@@ -136,7 +136,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
       children: [
         Icon(icon, color: Colors.black),
         Text(value, style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
-        Text(label, style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 12)),
+        Text(label, style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 12)),
       ],
     );
   }
@@ -311,12 +311,12 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      const Text('Sets', style: TextStyle(color: Colors.black)),
-                      const Text('Last', style: TextStyle(color: Colors.black)),
-                      const Text('Reps', style: TextStyle(color: Colors.black)),
+                      Text('Sets', style: TextStyle(color: Colors.black)),
+                      Text('Last', style: TextStyle(color: Colors.black)),
+                      Text('Reps', style: TextStyle(color: Colors.black)),
                     ],
                   ),
                   Expanded(
@@ -351,7 +351,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                                 ],
                               ),
                               Text('10 reps', style: TextStyle(color: Colors.grey[600])),
-                              Text('10', style: const TextStyle(color: Colors.black)),
+                              const Text('10', style: TextStyle(color: Colors.black)),
                             ],
                           ),
                         );

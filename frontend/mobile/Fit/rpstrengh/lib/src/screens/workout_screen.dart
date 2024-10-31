@@ -63,11 +63,11 @@ class WorkoutScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
+                  const Row(
                     children: [
-                      const Icon(Icons.menu, size: 24),
-                      const SizedBox(width: 8),
-                      const Text(
+                      Icon(Icons.menu, size: 24),
+                      SizedBox(width: 8),
+                      Text(
                         'All Exercises',
                         style: TextStyle(
                           fontSize: 20,
