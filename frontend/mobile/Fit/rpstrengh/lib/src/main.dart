@@ -13,7 +13,7 @@ class MainApp extends StatelessWidget {
     // Simulate a sign-in check
     await Future.delayed(const Duration(seconds: 2));
     // Return true if signed in, false otherwise
-    return true; // Change this based on your sign-in logic
+    return false; // Change this based on your sign-in logic
   }
 
   @override

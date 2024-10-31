@@ -10,11 +10,11 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_svg: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-  flutter_svg: ^2.0.10+1
 
 flutter:
   uses-material-design: true
@@ -26,4 +26,7 @@ flutter:
     - assets/images/abs.jpg
     - assets/images/chest.jpg
     - assets/images/challenge_fullbody.jpg
+    - assets/images/pushup.jpg
+    - assets/images/diamond_pushup.png
+    - assets/images/pullup.png
    

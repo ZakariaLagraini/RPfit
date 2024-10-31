@@ -13,7 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const WorkoutPage(),
+    const WorkoutScreen(),
     const StatsPage(),
     const ProfilePage(),
   ];
@@ -87,8 +87,8 @@ class HomePage extends StatelessWidget {
                           color: Colors.grey[100],
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                             Icon(Icons.search, color: Colors.grey, size: 20),
                             SizedBox(width: 8),
                             Text(
@@ -214,42 +214,50 @@ class WorkoutCategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            imagePath,
-            fit: BoxFit.cover,
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  Colors.black.withOpacity(0.7),
-                  Colors.transparent,
-                ],
-              ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const WorkoutScreen()),
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.7),
+                    Colors.transparent,
+                  ],
                 ),
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -273,7 +281,7 @@ class ProgramCard extends StatelessWidget {
       width: 260,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: Color.fromARGB(255, 55, 26, 26),
+        color: const Color.fromARGB(255, 55, 26, 26),
       ),
       child: Stack(
         children: [
@@ -325,18 +333,6 @@ class ProgramCard extends StatelessWidget {
   }
 }
 
-class WorkoutPage extends StatelessWidget {
-  const WorkoutPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Workout Page'),
-      ),
-    );
-  }
-}
 
 class StatsPage extends StatelessWidget {
   const StatsPage({super.key});
