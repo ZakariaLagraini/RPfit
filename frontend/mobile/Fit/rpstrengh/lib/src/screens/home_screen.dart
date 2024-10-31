@@ -1,289 +1,366 @@
 import 'package:flutter/material.dart';
+import 'workout_screen.dart';
 
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+
+  final List<Widget> _pages = [
+    const HomePage(),
+    const WorkoutPage(),
+    const StatsPage(),
+    const ProfilePage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            // Header with profile
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'Hi, Zakaria',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Text(
-                      'Let\'s check your activity',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-                CircleAvatar(
-                  radius: 25,
-                  backgroundColor: const Color(0xFFFFB5B5).withOpacity(0.1),
-                  child: const CircleAvatar(
-                    radius: 23,
-                    backgroundImage: AssetImage('assets/images/body.jpg'),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-
-            // Stats cards
-            Row(
-              children: [
-                _buildStatCard(
-                  '12',
-                  'Completed\nWorkouts',
-                  '💪',
-                  Color.fromRGBO(255, 0, 0, 1).withOpacity(0.1),
-                ),
-                const SizedBox(width: 15),
-                _buildStatCard(
-                  '2',
-                  'Workouts',
-                  '🏃‍♀️',
-                  Color.fromARGB(255, 202, 2, 2).withOpacity(0.1),
-                  subtitle: 'In progress',
-                ),
-              ],
-            ),
-            const SizedBox(height: 15),
-            _buildStatCard(
-              '62',
-              'Minutes',
-              '⏱️',
-              Color.fromARGB(255, 255, 0, 0).withOpacity(0.1),
-              subtitle: 'Time spent',
-              isWide: true,
-            ),
-
-            const SizedBox(height: 30),
-            
-            // Discover section
-            const Text(
-              'Discover new workouts',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 15),
-            
-            // Workout cards
-            Row(
-              children: [
-                Expanded(
-                  child: _buildWorkoutCard(
-                    'Cardio',
-                    '10 Exercises',
-                    '50 Minutes',
-                    Colors.orange,
-                    'assets/images/chest.jpg',
-                  ),
-                ),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: _buildWorkoutCard(
-                    'Arms',
-                    '6 Exercises',
-                    '35 Minutes',
-                    Colors.teal,
-                    'assets/images/challenge_fullbody.jpg',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 15),
-            _buildWorkoutCard(
-              'Stretching',
-              '8 Exercises',
-              '35 Minutes',
-              Color(0xFFFF4436),
-              'assets/images/abs.jpg',
-              showProgress: true,
-              progress: 0,
-            ),
-
-            // Progress message
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 20),
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Color(0xFFFF4436).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Row(
-                children: const [
-                  Text(
-                    '🎉',
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'Keep the progress!\nYou are more successful than 88% users.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Color(0xFFFF4436),
-        currentIndex: 0,
+        currentIndex: _currentIndex,
         onTap: (index) {
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          }
+          setState(() {
+            _currentIndex = index;
+          });
         },
+        selectedItemColor: const Color.fromARGB(255, 243, 33, 44),
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_fire_department),
-            label: 'Workouts',
+            icon: Icon(Icons.fitness_center),
+            label: 'Workout',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
+            icon: Icon(Icons.bar_chart),
+            label: 'Stats',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildStatCard(String value, String label, String emoji, Color color,
-      {String? subtitle, bool isWide = false}) {
-    return Container(
-      width: isWide ? double.infinity : null,
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Search bar and notification
+                Row(
+                  children: [
+                    const Icon(Icons.menu, size: 24),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: const [
+                            Icon(Icons.search, color: Colors.grey, size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              'Search Aaptiv',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Icon(Icons.notifications_none, size: 24),
+                  ],
                 ),
-              ),
-              Text(emoji, style: const TextStyle(fontSize: 24)),
-            ],
-          ),
-          if (subtitle != null) ...[
-            const SizedBox(height: 5),
-            Text(
-              subtitle,
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 14,
-              ),
-            ),
-          ],
-          const SizedBox(height: 5),
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.grey,
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildWorkoutCard(String title, String exercises, String duration,
-      Color color, String image,
-      {bool showProgress = false, double progress = 0}) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(15),
-        image: DecorationImage(
-          image: AssetImage(image),
-          fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-            color.withOpacity(0.6),
-            BlendMode.multiply,
+                const SizedBox(height: 24),
+
+                // Workout categories title
+                const Text(
+                  'Workout categories',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Categories grid
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 1.5,
+                  children: const [
+                    WorkoutCategoryCard(
+                      title: 'TREADMILL',
+                      imagePath: 'assets/images/body.jpg',
+                    ),
+                    WorkoutCategoryCard(
+                      title: 'OUTDOOR\nRUNNING',
+                      imagePath: 'assets/images/chest.jpg',
+                    ),
+                    WorkoutCategoryCard(
+                      title: 'STRENGTH\nTRAINING',
+                      imagePath: 'assets/images/challenge_fullbody.jpg',
+                    ),
+                    WorkoutCategoryCard(
+                      title: 'STRETCHING',
+                      imagePath: 'assets/images/abs.jpg',
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                // Programs section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Programs for you',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'See all >',
+                        style: TextStyle(color: Color.fromARGB(255, 243, 33, 51)),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Programs horizontal list
+                SizedBox(
+                  height: 180,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: const [
+                      ProgramCard(
+                        title: 'Total Body Training',
+                        trainer: 'with Ackeem',
+                        imagePath: 'assets/images/challenge_fullbody.jpg',
+                      ),
+                      SizedBox(width: 12),
+                      ProgramCard(
+                        title: 'Cross-Training to 5K',
+                        trainer: 'with Meg',
+                        imagePath: 'assets/images/abs.jpg',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    );
+  }
+}
+
+class WorkoutCategoryCard extends StatelessWidget {
+  final String title;
+  final String imagePath;
+
+  const WorkoutCategoryCard({
+    super.key,
+    required this.title,
+    required this.imagePath,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          Image.asset(
+            imagePath,
+            fit: BoxFit.cover,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  Colors.black.withOpacity(0.7),
+                  Colors.transparent,
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 5),
-          Text(
-            exercises,
-            style: const TextStyle(color: Colors.white70),
-          ),
-          Text(
-            duration,
-            style: const TextStyle(color: Colors.white70),
-          ),
-          if (showProgress) ...[
-            const SizedBox(height: 10),
-            LinearProgressIndicator(
-              value: progress,
-              backgroundColor: Colors.white30,
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-            const SizedBox(height: 5),
-            Text(
-              '${(progress * 100).toInt()}/8',
-              style: const TextStyle(color: Colors.white),
-            ),
-          ],
+          ),
         ],
       ),
     );
   }
-} 
+}
+
+class ProgramCard extends StatelessWidget {
+  final String title;
+  final String trainer;
+  final String imagePath;
+
+  const ProgramCard({
+    super.key,
+    required this.title,
+    required this.trainer,
+    required this.imagePath,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 260,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Color.fromARGB(255, 55, 26, 26),
+      ),
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              imagePath,
+              width: 260,
+              height: 180,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'PROGRAM',
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  trainer,
+                  style: TextStyle(
+                    color: Colors.grey[400],
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class WorkoutPage extends StatelessWidget {
+  const WorkoutPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text('Workout Page'),
+      ),
+    );
+  }
+}
+
+class StatsPage extends StatelessWidget {
+  const StatsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text('Stats Page'),
+      ),
+    );
+  }
+}
+
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text('Profile Page'),
+      ),
+    );
+  }
+}
 

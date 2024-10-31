@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rpstrengh/src/screens/diet_goal_screen.dart';
 
 class DietTypeScreen extends StatefulWidget {
-  const DietTypeScreen({Key? key}) : super(key: key);
+  const DietTypeScreen({super.key});
 
   @override
   State<DietTypeScreen> createState() => _DietTypeScreenState();

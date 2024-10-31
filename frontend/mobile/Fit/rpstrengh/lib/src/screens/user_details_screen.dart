@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rpstrengh/src/screens/diet_type_screen.dart';
 
 class UserDetailsScreen extends StatefulWidget {
-  const UserDetailsScreen({Key? key}) : super(key: key);
+  const UserDetailsScreen({super.key});
 
   @override
   State<UserDetailsScreen> createState() => _UserDetailsScreenState();
@@ -182,8 +182,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Row(
-            children: const [
+          child: const Row(
+            children: [
               Expanded(
                 child: Text(
                   'Your data is secure.\nWe don\'t send or sell your data to 3rd parties.',

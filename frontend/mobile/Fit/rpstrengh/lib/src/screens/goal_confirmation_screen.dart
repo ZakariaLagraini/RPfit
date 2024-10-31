@@ -6,10 +6,10 @@ class GoalConfirmationScreen extends StatelessWidget {
   final double weightGoal;
   
   const GoalConfirmationScreen({
-    Key? key, 
+    super.key, 
     required this.goalType,
     required this.weightGoal,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

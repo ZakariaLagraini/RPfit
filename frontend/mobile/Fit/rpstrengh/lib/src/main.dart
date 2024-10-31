@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/welcomePage.dart';
+import 'screens/home_screen.dart';
+import 'screens/welcome_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -8,11 +9,29 @@ void main() {
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
+  Future<bool> _checkSignInStatus() async {
+    // Simulate a sign-in check
+    await Future.delayed(const Duration(seconds: 2));
+    // Return true if signed in, false otherwise
+    return true; // Change this based on your sign-in logic
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: WelcomePage(),
+      home: FutureBuilder<bool>(
+        future: _checkSignInStatus(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData && snapshot.data == true) {
+            return const HomeScreen();
+          } else {
+            return const WelcomePage();
+          }
+        },
+      ),
     );
   }
 }

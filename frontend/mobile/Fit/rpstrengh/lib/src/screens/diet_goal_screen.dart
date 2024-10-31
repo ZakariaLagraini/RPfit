@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rpstrengh/src/screens/goal_confirmation_screen.dart';
 
 class DietGoalScreen extends StatefulWidget {
-  const DietGoalScreen({Key? key}) : super(key: key);
+  const DietGoalScreen({super.key});
 
   @override
   State<DietGoalScreen> createState() => _DietGoalScreenState();
@@ -27,8 +27,8 @@ class _DietGoalScreenState extends State<DietGoalScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: const [
+            const Row(
+              children: [
                 Text(
                   'Choose a diet goal',
                   style: TextStyle(

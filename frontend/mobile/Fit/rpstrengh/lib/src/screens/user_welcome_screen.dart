@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rpstrengh/src/screens/user_details_screen.dart';
 
 class UserWelcomeScreen extends StatefulWidget {
-  const UserWelcomeScreen({Key? key}) : super(key: key);
+  const UserWelcomeScreen({super.key});
 
   @override
   State<UserWelcomeScreen> createState() => _UserWelcomeScreenState();
@@ -92,7 +92,7 @@ class _UserWelcomeScreenState extends State<UserWelcomeScreen> {
                     } 
                   : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 244, 67, 54),
+                  backgroundColor: const Color.fromARGB(255, 244, 67, 54),
                   padding: const EdgeInsets.all(15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
