@@ -8,6 +8,7 @@ import { UserReviewsComponent } from './user-reviews/user-reviews.component';
 import { PayComponent } from './pay/pay.component';
 import { NewsletterComponent } from './newsletter/newsletter.component';
 import { FooterComponent } from './footer/footer.component';
+import { ProfileCreationComponent } from './profile-creation/profile-creation.component';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,8 @@ import { FooterComponent } from './footer/footer.component';
     UserReviewsComponent,
     PayComponent,
     NewsletterComponent,
-    FooterComponent
+    FooterComponent,
+    ProfileCreationComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

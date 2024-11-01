@@ -6,9 +6,6 @@
 
     <!-- Continue with Social Media Buttons -->
     <div class="space-y-4 mb-6">
-      <!-- <button class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-md text-gray-800 font-semibold transition duration-300 hover:bg-gray-100">
-        <i class="fab fa-apple text-2xl mr-2"></i> Continue with Apple
-      </button> -->
       <button class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-md text-gray-800 font-semibold transition duration-300 hover:bg-gray-100">
         <i class="fab fa-facebook text-2xl mr-2 text-blue-600"></i> Continue with Facebook
       </button>
@@ -24,26 +21,43 @@
       <hr class="flex-grow border-t border-gray-300">
     </div>
 
-    <!-- Sign Up Form -->
-    <form>
+    <form (ngSubmit)="onSubmit()">
       <div class="space-y-4">
-        <input type="text" placeholder="Name" class="w-full py-3 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-        <input type="email" placeholder="Email address" class="w-full py-3 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-        <input type="password" placeholder="Password" class="w-full py-3 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-        <input type="password" placeholder="Confirm Password" class="w-full py-3 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+        <input 
+          type="text" 
+          [(ngModel)]="userData.name" 
+          name="name"
+          placeholder="Name" 
+          class="w-full py-3 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+        <input 
+          type="email" 
+          [(ngModel)]="userData.email" 
+          name="email"
+          placeholder="Email address" 
+          class="w-full py-3 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+        <input 
+          type="password" 
+          [(ngModel)]="userData.password" 
+          name="password"
+          placeholder="Password" 
+          class="w-full py-3 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+        <input 
+          type="password" 
+          [(ngModel)]="userData.confirmPassword" 
+          name="confirmPassword"
+          placeholder="Confirm Password" 
+          class="w-full py-3 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
       </div>
-
+    
       <button type="submit" class="w-full bg-red-500 text-white font-bold py-3 px-4 rounded-md mt-6 hover:bg-red-600 transition duration-300">Create account</button>
-
     </form>
-
-    <!-- Already Have an Account -->
+    
+    
     <p class="mt-4 text-sm text-center">
       Already have an account?
       <a routerLink="/sign-in" class="text-red-500 font-semibold hover:underline">Sign in</a>
     </p>
 
-    <!-- Privacy and Terms Links -->
     <div class="mt-8 text-sm text-center space-x-4 text-gray-400">
       <a href="#" class="hover:underline">Privacy Policy</a>
       <span>|</span>

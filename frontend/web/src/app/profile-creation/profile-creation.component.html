@@ -1,0 +1,186 @@
+<section class="flex items-center justify-center min-h-screen relative bg-black overflow-hidden">
+  <!-- Dynamic Background with Fitness Theme -->
+  <div class="absolute top-0 left-0 right-0 bottom-0 bg-cover bg-center" 
+       style="background-image: url('assets/fitness-bg.jpg');">
+    <div class="bg-gradient-to-b from-red-900/90 via-red-900/80 to-black/95 w-full h-full"></div>
+  </div>
+
+  <!-- Enhanced Form Container -->
+  <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 max-w-4xl w-full relative z-10 mx-4 my-8">
+    <div class="flex flex-col items-center mb-8">
+      <h2 class="text-3xl font-bold text-red-600 mb-2">Build Your Fitness Profile</h2>
+      <p class="text-gray-600 text-center">Let's customize your fitness journey</p>
+    </div>
+
+    <!-- Profile Picture Section -->
+    <div class="mb-8 text-center">
+      <div class="w-32 h-32 mx-auto mb-4 rounded-full border-4 border-red-500 overflow-hidden bg-gray-100 flex items-center justify-center">
+        <label for="profilePicture" class="cursor-pointer w-full h-full flex items-center justify-center">
+          <div *ngIf="!profilePicture" class="text-gray-400">
+            <i class="fas fa-camera text-2xl"></i>
+            <p class="text-xs mt-2">Add Photo</p>
+          </div>
+          <img *ngIf="profilePicture" [src]="getProfileImageUrl()" class="w-full h-full object-cover" alt="Profile Preview">
+        </label>
+      </div>
+      <input type="file" id="profilePicture" (change)="onFileChange($event)" class="hidden" accept="image/*">
+    </div>
+
+    <form class="space-y-6">
+      <!-- Basic Information -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="relative">
+          <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+              <i class="fas fa-user"></i>
+            </span>
+            <input 
+              type="text" 
+              [(ngModel)]="formData.firstName" 
+              name="firstName"
+              placeholder="Enter your first name"
+              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all bg-gray-50/50"
+              required>
+          </div>
+        </div>
+        <div class="relative">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+              <i class="fas fa-user"></i>
+            </span>
+            <input 
+              type="text" 
+              [(ngModel)]="formData.lastName" 
+              name="lastName"
+              placeholder="Enter your last name"
+              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all bg-gray-50/50"
+              required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fitness Metrics -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="relative">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Age</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+              <i class="fas fa-calendar"></i>
+            </span>
+            <input 
+              type="number" 
+              [(ngModel)]="formData.age" 
+              name="age"
+              placeholder="Your age"
+              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all bg-gray-50/50"
+              required>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Weight ({{weightUnit}})</label>
+          <div class="flex gap-2">
+            <input 
+              type="number" 
+              [(ngModel)]="formData.weight" 
+              name="weight"
+              placeholder="Enter weight"
+              class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              required>
+            <select 
+              [(ngModel)]="weightUnit" 
+              name="weightUnit" 
+              class="w-20 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white">
+              <option value="kg">kg</option>
+              <option value="lbs">lbs</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Height ({{heightUnit}})</label>
+          <div class="flex gap-2">
+            <input 
+              type="number" 
+              [(ngModel)]="formData.height" 
+              name="height"
+              placeholder="Enter height"
+              class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              required>
+            <select 
+              [(ngModel)]="heightUnit" 
+              name="heightUnit" 
+              class="w-20 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white">
+              <option value="cm">cm</option>
+              <option value="ft">ft</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fitness Goals -->
+      <div class="space-y-4">
+        <label class="block text-sm font-medium text-gray-700 mb-4">What are your primary fitness goals?</label>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <!-- Weight Loss -->
+          <div class="fitness-goal-card">
+            <input type="radio" id="weightLoss" name="fitnessGoal" [(ngModel)]="formData.fitnessGoal" value="weightLoss" class="hidden">
+            <label for="weightLoss" class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-red-500 transition-all text-center group">
+              <i class="fas fa-weight text-2xl text-red-500 mb-3 block group-hover:scale-110 transition-transform"></i>
+              <span class="block text-sm font-medium">Weight Loss</span>
+            </label>
+          </div>
+
+          <!-- Muscle Gain -->
+          <div class="fitness-goal-card">
+            <input type="radio" id="muscleGain" name="fitnessGoal" [(ngModel)]="formData.fitnessGoal" value="muscleGain" class="hidden">
+            <label for="muscleGain" class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-red-500 transition-all text-center group">
+              <i class="fas fa-dumbbell text-2xl text-red-500 mb-3 block group-hover:scale-110 transition-transform"></i>
+              <span class="block text-sm font-medium">Muscle Gain</span>
+            </label>
+          </div>
+
+          <!-- Endurance -->
+          <div class="fitness-goal-card">
+            <input type="radio" id="endurance" name="fitnessGoal" [(ngModel)]="formData.fitnessGoal" value="endurance" class="hidden">
+            <label for="endurance" class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-red-500 transition-all text-center group">
+              <i class="fas fa-running text-2xl text-red-500 mb-3 block group-hover:scale-110 transition-transform"></i>
+              <span class="block text-sm font-medium">Endurance</span>
+            </label>
+          </div>
+
+          <!-- Flexibility -->
+          <div class="fitness-goal-card">
+            <input type="radio" id="flexibility" name="fitnessGoal" [(ngModel)]="formData.fitnessGoal" value="flexibility" class="hidden">
+            <label for="flexibility" class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-red-500 transition-all text-center group">
+              <i class="fas fa-child text-2xl text-red-500 mb-3 block group-hover:scale-110 transition-transform"></i>
+              <span class="block text-sm font-medium">Flexibility</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Experience Level -->
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">Fitness Experience Level</label>
+        <select 
+          [(ngModel)]="formData.experienceLevel" 
+          name="experienceLevel"
+          class="w-full p-2.5 border border-gray-200 rounded-md focus:outline-none focus:border-red-500 bg-white">
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+          <option value="expert">Expert</option>
+        </select>
+      </div>
+
+      <!-- Submit Button -->
+      <button 
+        type="submit" 
+        (click)="saveProfile()" 
+        class="w-full bg-red-500 text-white font-medium p-2.5 rounded-md hover:bg-red-600 transition-colors">
+        Start Your Fitness Journey
+      </button>
+    </form>
+  </div>
+</section>
