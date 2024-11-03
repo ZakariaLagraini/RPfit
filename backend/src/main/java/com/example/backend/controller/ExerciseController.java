@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/exercises")
 public class ExerciseController {
 
     private final ExerciseService exerciseService;
@@ -20,7 +20,7 @@ public class ExerciseController {
     }
 
     // Create a new exercise
-    @PostMapping("/exercises")
+    @PostMapping
     public ResponseEntity<Exercise> createExercise(@RequestBody Exercise exercise) {
         Exercise createdExercise = exerciseService.addExercise(exercise);
         return new ResponseEntity<>(createdExercise, HttpStatus.CREATED);
