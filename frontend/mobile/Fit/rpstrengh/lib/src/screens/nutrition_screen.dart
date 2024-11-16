@@ -21,7 +21,7 @@ class NutritionScreen extends StatelessWidget {
             '22g',
             '45g',
             '35g',
-            'assets/images/beef_pumpkin.jpg',
+            'assets/images/beef_pumpkin.png',
           ),
           _buildMealCard(
             'Greens Salad',
@@ -29,7 +29,7 @@ class NutritionScreen extends StatelessWidget {
             '18g',
             '20g',
             '27g',
-            'assets/images/greens_salad.jpg',
+            'assets/images/greens_salad.png',
           ),
           _buildMealCard(
             'Salmon and Greens',
@@ -37,7 +37,7 @@ class NutritionScreen extends StatelessWidget {
             '30g',
             '25g',
             '18g',
-            'assets/images/salmon_greens.jpg',
+            'assets/images/salmon_greens.png',
           ),
           _buildMealCard(
             'Avocado on Toast',
@@ -45,7 +45,7 @@ class NutritionScreen extends StatelessWidget {
             '15g',
             '24g',
             '22g',
-            'assets/images/avocado_toast.jpg',
+            'assets/images/avocado_toast.png',
           ),
           _buildMealCard(
             'Penne Pesto Pasta',
@@ -53,7 +53,7 @@ class NutritionScreen extends StatelessWidget {
             '16g',
             '29g',
             '45g',
-            'assets/images/penne_pesto.jpg',
+            'assets/images/penne_pesto.png',
           ),
           _buildMealCard(
             'Pad Thai Noodle',
@@ -61,7 +61,7 @@ class NutritionScreen extends StatelessWidget {
             '45g',
             '35g',
             '36g',
-            'assets/images/pad_thai.jpg',
+            'assets/images/pad_thai.png',
           ),
         ],
       ),

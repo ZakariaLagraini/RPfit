@@ -134,7 +134,7 @@ class StatsPage extends StatelessWidget {
                               isCurved: true,
                               color: primaryColor,
                               barWidth: 3,
-                              dotData: FlDotData(show: true),
+                              dotData: const FlDotData(show: true),
                             ),
                           ],
                           gridData: FlGridData(
