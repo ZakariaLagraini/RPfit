@@ -5,6 +5,7 @@ import { SignInComponent } from './sign-in/sign-in.component';
 import { ProfileCreationComponent } from './profile-creation/profile-creation.component';
 import { ProfileComponent } from './profile/profile.component';
 import { WorkoutComponent } from './workout/workout.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent }, 
@@ -48,6 +49,7 @@ export const routes: Routes = [
         loadComponent: () => import('./progress/progress.component').then(m => m.ProgressComponent)
     },
     { path: 'workout', component: WorkoutComponent },
+    { path: 'dashboard', component: DashboardComponent },
 ];
 
 

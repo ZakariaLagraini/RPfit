@@ -5,9 +5,8 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterModule, CommonModule],
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  imports: [CommonModule, RouterModule],
+  templateUrl: './header.component.html'
 })
 export class HeaderComponent {
   @ViewChild('dropdown') dropdownRef!: ElementRef;
