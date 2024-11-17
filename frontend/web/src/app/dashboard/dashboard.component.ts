@@ -102,7 +102,107 @@ export class DashboardComponent implements OnInit {
   }
 
   private initializeCharts(): void {
-    // Initialize your dashboard charts here
+    this.createWorkoutProgressChart();
+    this.createBodyMetricsChart();
+  }
+
+  private createWorkoutProgressChart(): void {
+    const ctx = document.getElementById('workoutChart') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+          label: 'Workouts',
+          data: [3, 4, 2, 5, 3, 4, 2],
+          backgroundColor: this.chartColors.primary,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false
+          },
+          title: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              display: false
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+  }
+
+  private createBodyMetricsChart(): void {
+    const ctx = document.getElementById('metricsChart') as HTMLCanvasElement;
+    const config: ChartConfiguration = {
+      type: 'line',
+      data: {
+        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        datasets: [
+          {
+            label: 'Weight (lbs)',
+            data: [185, 183, 181, 179],
+            borderColor: this.chartColors.primary,
+            tension: 0.3,
+            fill: true,
+            backgroundColor: 'rgba(79, 70, 229, 0.1)'
+          },
+          {
+            label: 'Body Fat %',
+            data: [22, 21, 20.5, 19.8],
+            borderColor: this.chartColors.secondary,
+            tension: 0.3,
+            fill: true,
+            backgroundColor: 'rgba(6, 182, 212, 0.1)'
+          },
+          {
+            label: 'Muscle Mass (lbs)',
+            data: [142, 143, 144, 145],
+            borderColor: this.chartColors.success,
+            tension: 0.3,
+            fill: true,
+            backgroundColor: 'rgba(5, 150, 105, 0.1)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              padding: 15
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: '#6B7280' }
+          },
+          y: {
+            grid: { color: 'rgba(107, 114, 128, 0.1)' },
+            ticks: { color: '#6B7280' }
+          }
+        }
+      }
+    };
+    new Chart(ctx, config);
   }
 
   openScheduleModal() {

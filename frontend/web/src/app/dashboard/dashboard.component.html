@@ -1,4 +1,12 @@
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-red-50/10 to-gray-100 pt-24 pb-12">
+  <!-- Add Back Button -->
+  <button (click)="goBack()" 
+          class="absolute top-6 left-6 text-gray-600 hover:text-red-500 font-semibold group 
+                 flex items-center space-x-2 transition-all duration-300">
+    <i class="fas fa-arrow-left transform group-hover:-translate-x-1 transition-transform"></i>
+    <span>Back</span>
+  </button>
+
   <div class="container mx-auto px-4 max-w-7xl">
     <!-- Header Section -->
     <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
@@ -107,12 +115,30 @@
     <!-- Charts Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
       <div class="bg-white p-6 rounded-2xl shadow-xl">
-        <h3 class="text-lg font-semibold text-gray-800 mb-6">Workout Progress</h3>
-        <canvas id="workoutChart" class="w-full h-[300px]"></canvas>
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-800">Workout Progress</h3>
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-1 text-sm rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">Week</button>
+            <button class="px-3 py-1 text-sm rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">Month</button>
+          </div>
+        </div>
+        <div class="relative">
+          <canvas id="workoutChart" class="w-full h-[300px]"></canvas>
+        </div>
       </div>
+
       <div class="bg-white p-6 rounded-2xl shadow-xl">
-        <h3 class="text-lg font-semibold text-gray-800 mb-6">Body Metrics</h3>
-        <canvas id="metricsChart" class="w-full h-[300px]"></canvas>
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-800">Body Metrics</h3>
+          <select class="px-3 py-1 text-sm rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 focus:outline-none">
+            <option value="month">Last Month</option>
+            <option value="3months">Last 3 Months</option>
+            <option value="6months">Last 6 Months</option>
+          </select>
+        </div>
+        <div class="relative">
+          <canvas id="metricsChart" class="w-full h-[300px]"></canvas>
+        </div>
       </div>
     </div>
 
