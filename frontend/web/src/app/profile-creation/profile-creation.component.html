@@ -1,4 +1,11 @@
 <section class="flex items-center justify-center min-h-screen relative bg-black overflow-hidden">
+  <button (click)="goBack()" 
+          class="absolute top-6 left-6 text-white hover:text-red-400 font-semibold group 
+                 flex items-center space-x-2 z-10 transition-all duration-300">
+    <i class="fas fa-arrow-left transform group-hover:-translate-x-1 transition-transform"></i>
+    <span>Back</span>
+  </button>
+
   <!-- Dynamic Background with Fitness Theme -->
   <div class="absolute top-0 left-0 right-0 bottom-0 bg-cover bg-center" 
        style="background-image: url('assets/fitness-bg.jpg');">

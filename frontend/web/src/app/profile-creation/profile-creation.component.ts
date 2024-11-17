@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-profile-creation',
@@ -26,7 +27,7 @@ export class ProfileCreationComponent implements OnDestroy {
     experienceLevel: ''
   };
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private location: Location) {}
 
   onFileChange(event: any): void {
     const file = event.target.files?.[0];
@@ -63,6 +64,10 @@ export class ProfileCreationComponent implements OnDestroy {
       default:
         this.router.navigate(['/exercises']);
     }
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   ngOnDestroy() {

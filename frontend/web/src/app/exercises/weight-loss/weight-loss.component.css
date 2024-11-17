@@ -120,15 +120,6 @@ button:hover {
   grid-template-rows: 1fr;
 }
 
-/* Exercise preview hover effect */
-.exercise-preview {
-  transition: all 0.3s ease;
-}
-
-.exercise-preview:hover {
-  background-color: rgba(239, 68, 68, 0.05);
-}
-
 /* Rotate chevron icon */
 .chevron-icon {
   transition: transform 0.3s ease;
@@ -136,4 +127,13 @@ button:hover {
 
 .chevron-icon.expanded {
   transform: rotate(180deg);
+}
+
+/* Exercise preview hover effect */
+.exercise-preview {
+  transition: all 0.3s ease;
+}
+
+.exercise-preview:hover {
+  background-color: rgba(239, 68, 68, 0.05);
 }
