@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { ProfileCreationComponent } from './profile-creation/profile-creation.component';
 import { ProfileComponent } from './profile/profile.component';
+import { WorkoutComponent } from './workout/workout.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent }, 
@@ -37,7 +38,16 @@ export const routes: Routes = [
                 pathMatch: 'full' 
             }
         ]
-    }
+    },
+    {
+        path: 'nutrition',
+        loadComponent: () => import('./nutrition/nutrition.component').then(m => m.NutritionComponent)
+    },
+    {
+        path: 'progress',
+        loadComponent: () => import('./progress/progress.component').then(m => m.ProgressComponent)
+    },
+    { path: 'workout', component: WorkoutComponent },
 ];
 
 

@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-app-highlights',
+  selector: 'app-highlights',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, RouterModule],
   templateUrl: './app-highlights.component.html',
-  styleUrl: './app-highlights.component.css'
+  styleUrls: ['./app-highlights.component.css']
 })
 export class AppHighlightsComponent {
 

@@ -1,0 +1,119 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-red-50/10 to-gray-100 pt-24 pb-12">
+  <div class="container mx-auto px-4 max-w-6xl">
+    <!-- Back Button -->
+    <button (click)="goBack()" 
+            class="absolute top-6 left-6 text-gray-600 hover:text-red-500 font-semibold group 
+                   flex items-center space-x-2 transition-all duration-300">
+      <i class="fas fa-arrow-left transform group-hover:-translate-x-1 transition-transform"></i>
+      <span>Back</span>
+    </button>
+
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+      <div class="relative h-48 bg-gradient-to-r from-red-500 to-red-600">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="absolute -right-16 -top-16 w-64 h-64 bg-red-400/20 rounded-full blur-3xl"></div>
+        <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-red-600/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-8 left-8 z-10">
+          <h1 class="text-4xl font-bold text-white mb-2">Your Progress</h1>
+          <p class="text-red-100">Track your fitness journey and celebrate your achievements</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+      <!-- Weight Progress Chart -->
+      <div class="bg-white p-6 rounded-2xl shadow-xl chart-container">
+        <div class="h-[300px]">
+          <canvas id="weightChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Workout Metrics Chart -->
+      <div class="bg-white p-6 rounded-2xl shadow-xl">
+        <canvas id="workoutMetricsChart"></canvas>
+      </div>
+
+      <!-- Calories Chart -->
+      <div class="bg-white p-6 rounded-2xl shadow-xl md:col-span-2">
+        <canvas id="caloriesChart"></canvas>
+      </div>
+
+      <!-- Strength Progress -->
+      <div class="bg-white p-6 rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">
+            <i class="fas fa-dumbbell text-red-500 mr-2"></i>
+            Strength Progress
+          </h3>
+          <div class="text-sm text-gray-500">Last 30 days</div>
+        </div>
+        <canvas id="strengthChart"></canvas>
+      </div>
+
+      <!-- Cardio Fitness -->
+      <div class="bg-white p-6 rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">
+            <i class="fas fa-heartbeat text-red-500 mr-2"></i>
+            Cardio Fitness
+          </h3>
+          <div class="text-sm text-gray-500">Last 30 days</div>
+        </div>
+        <canvas id="cardioChart"></canvas>
+      </div>
+
+      <!-- Sleep & Recovery -->
+      <div class="bg-white p-6 rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">
+            <i class="fas fa-moon text-red-500 mr-2"></i>
+            Sleep & Recovery
+          </h3>
+          <div class="text-sm text-gray-500">Weekly average</div>
+        </div>
+        <canvas id="sleepChart"></canvas>
+      </div>
+
+      <!-- Hydration Tracking -->
+      <div class="bg-white p-6 rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">
+            <i class="fas fa-tint text-red-500 mr-2"></i>
+            Hydration
+          </h3>
+          <div class="text-sm text-gray-500">Daily intake</div>
+        </div>
+        <canvas id="hydrationChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Progress Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-xl p-6 text-center shadow-xl">
+        <i class="fas fa-weight text-red-500 text-2xl mb-4"></i>
+        <h3 class="text-gray-700 font-semibold mb-2">Total Weight Loss</h3>
+        <p class="text-3xl font-bold text-gray-800">
+          {{totalWeightLoss}} kg
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl p-6 text-center shadow-xl">
+        <i class="fas fa-dumbbell text-red-500 text-2xl mb-4"></i>
+        <h3 class="text-gray-700 font-semibold mb-2">Total Workouts</h3>
+        <p class="text-3xl font-bold text-gray-800">
+          {{totalWorkouts}}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl p-6 text-center shadow-xl">
+        <i class="fas fa-fire text-red-500 text-2xl mb-4"></i>
+        <h3 class="text-gray-700 font-semibold mb-2">Total Calories Burned</h3>
+        <p class="text-3xl font-bold text-gray-800">
+          {{totalCaloriesBurned}}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
