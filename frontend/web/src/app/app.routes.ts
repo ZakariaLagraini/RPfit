@@ -9,7 +9,33 @@ export const routes: Routes = [
     { path: 'sign-up', component: SignupComponent }, 
     { path: 'sign-in', component: SignInComponent },
     { path: 'profile-creation', component: ProfileCreationComponent },
-
+    {
+        path: 'exercises',
+        loadComponent: () => import('./exercises/exercises/exercises.component').then(m => m.ExercisesComponent),
+        children: [
+            {
+                path: 'weight-loss',
+                loadComponent: () => import('./exercises/weight-loss/weight-loss.component').then(m => m.WeightLossComponent)
+            },
+            {
+                path: 'muscle-gain',
+                loadComponent: () => import('./exercises/muscle-gain/muscle-gain.component').then(m => m.MuscleGainComponent)
+            },
+            {
+                path: 'maintenance',
+                loadComponent: () => import('./exercises/maintenance/maintenance.component').then(m => m.MaintenanceComponent)
+            },
+            {
+                path: 'flexibility',
+                loadComponent: () => import('./exercises/flexibility/flexibility.component').then(m => m.FlexibilityComponent)
+            },
+            { 
+                path: '', 
+                redirectTo: 'weight-loss', 
+                pathMatch: 'full' 
+            }
+        ]
+    }
 ];
 
 
