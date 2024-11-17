@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Location } from '@angular/common';
 
 interface ExerciseLog {
   date: string;
@@ -136,6 +137,8 @@ export class WeightLossComponent {
     notes: ''
   };
 
+  constructor(private location: Location) {}
+
   selectCategory(category: ExerciseCategory): void {
     this.selectedCategory = category;
   }
@@ -185,5 +188,9 @@ export class WeightLossComponent {
     }
     // Toggle the clicked exercise
     exercise.isExpanded = !exercise.isExpanded;
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }
