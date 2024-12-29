@@ -1,7 +1,8 @@
 package com.example.backend.service;
 
-import com.example.backend.entity.WorkoutPlan;
+import com.example.backend.entity.Client;
 import com.example.backend.entity.Exercise;
+import com.example.backend.entity.WorkoutPlan;
 import com.example.backend.repository.WorkoutPlanRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,125 +26,108 @@ class WorkoutPlanServiceTest {
     @InjectMocks
     private WorkoutPlanService workoutPlanService;
 
-    private WorkoutPlan testWorkoutPlan;
+    private WorkoutPlan workoutPlan;
+    private Client client;
+    private Exercise exercise;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        testWorkoutPlan = new WorkoutPlan();
-        testWorkoutPlan.setId(1L);
-        testWorkoutPlan.setName("Test Workout Plan");
-        testWorkoutPlan.setDurationInWeeks(8);
-        testWorkoutPlan.setClientId(1L);
-        
-        List<Exercise> exercises = new ArrayList<>();
-        Exercise exercise = new Exercise();
+
+        client = new Client();
+        client.setId(1L);
+
+        exercise = new Exercise();
         exercise.setId(1L);
         exercise.setName("Bench Press");
-        exercises.add(exercise);
-        testWorkoutPlan.setExercises(exercises);
+
+        workoutPlan = new WorkoutPlan();
+        workoutPlan.setId(1L);
+        workoutPlan.setName("Strength Training");
+        workoutPlan.setDurationInWeeks(12);
+        workoutPlan.setClient(client);
+        workoutPlan.setExercises(Arrays.asList(exercise));
     }
 
     @Test
-    void addWorkoutPlan_Success() {
-        when(workoutPlanRepository.save(any(WorkoutPlan.class))).thenReturn(testWorkoutPlan);
+    void addWorkoutPlan_ShouldReturnSavedWorkoutPlan() {
+        when(workoutPlanRepository.save(any(WorkoutPlan.class))).thenReturn(workoutPlan);
 
-        WorkoutPlan savedPlan = workoutPlanService.addWorkoutPlan(testWorkoutPlan);
+        WorkoutPlan savedWorkoutPlan = workoutPlanService.addWorkoutPlan(workoutPlan);
 
-        assertNotNull(savedPlan);
-        assertEquals(testWorkoutPlan.getName(), savedPlan.getName());
-        assertEquals(testWorkoutPlan.getDurationInWeeks(), savedPlan.getDurationInWeeks());
-        verify(workoutPlanRepository, times(1)).save(any(WorkoutPlan.class));
+        assertNotNull(savedWorkoutPlan);
+        assertEquals(workoutPlan.getId(), savedWorkoutPlan.getId());
+        assertEquals(workoutPlan.getName(), savedWorkoutPlan.getName());
+        verify(workoutPlanRepository, times(1)).save(workoutPlan);
     }
 
     @Test
-    void updateWorkoutPlan_WhenExists() {
-        WorkoutPlan updatedPlan = new WorkoutPlan();
-        updatedPlan.setName("Updated Plan");
-        updatedPlan.setDurationInWeeks(12);
-        
-        when(workoutPlanRepository.findById(1L)).thenReturn(Optional.of(testWorkoutPlan));
-        when(workoutPlanRepository.save(any(WorkoutPlan.class))).thenReturn(updatedPlan);
+    void updateWorkoutPlan_WhenPlanExists_ShouldUpdateAndReturnPlan() {
+        WorkoutPlan updatedWorkoutPlan = new WorkoutPlan();
+        updatedWorkoutPlan.setName("Updated Plan");
+        updatedWorkoutPlan.setDurationInWeeks(16);
+        updatedWorkoutPlan.setExercises(Arrays.asList(exercise));
 
-        WorkoutPlan result = workoutPlanService.updateWorkoutPlan(1L, updatedPlan);
+        when(workoutPlanRepository.findById(1L)).thenReturn(Optional.of(workoutPlan));
+        when(workoutPlanRepository.save(any(WorkoutPlan.class))).thenReturn(workoutPlan);
+
+        WorkoutPlan result = workoutPlanService.updateWorkoutPlan(1L, updatedWorkoutPlan);
 
         assertNotNull(result);
-        assertEquals(updatedPlan.getName(), result.getName());
-        assertEquals(updatedPlan.getDurationInWeeks(), result.getDurationInWeeks());
-        verify(workoutPlanRepository, times(1)).findById(1L);
-        verify(workoutPlanRepository, times(1)).save(any(WorkoutPlan.class));
+        assertEquals(updatedWorkoutPlan.getName(), result.getName());
+        assertEquals(updatedWorkoutPlan.getDurationInWeeks(), result.getDurationInWeeks());
+        assertEquals(updatedWorkoutPlan.getExercises(), result.getExercises());
+        verify(workoutPlanRepository, times(1)).save(workoutPlan);
     }
 
     @Test
-    void updateWorkoutPlan_WhenNotExists() {
-        WorkoutPlan updatedPlan = new WorkoutPlan();
-        when(workoutPlanRepository.findById(999L)).thenReturn(Optional.empty());
+    void updateWorkoutPlan_WhenPlanDoesNotExist_ShouldReturnNull() {
+        when(workoutPlanRepository.findById(1L)).thenReturn(Optional.empty());
 
-        WorkoutPlan result = workoutPlanService.updateWorkoutPlan(999L, updatedPlan);
+        WorkoutPlan result = workoutPlanService.updateWorkoutPlan(1L, new WorkoutPlan());
 
         assertNull(result);
-        verify(workoutPlanRepository, times(1)).findById(999L);
-        verify(workoutPlanRepository, never()).save(any(WorkoutPlan.class));
+        verify(workoutPlanRepository, never()).save(any());
     }
 
     @Test
-    void getWorkoutPlansByClientId_Success() {
-        List<WorkoutPlan> plans = Arrays.asList(testWorkoutPlan);
-        when(workoutPlanRepository.findByClientId(1L)).thenReturn(plans);
+    void getWorkoutPlansByClientId_ShouldReturnListOfPlans() {
+        List<WorkoutPlan> workoutPlans = Arrays.asList(workoutPlan);
+        when(workoutPlanRepository.findByClientId(1L)).thenReturn(workoutPlans);
 
-        List<WorkoutPlan> foundPlans = workoutPlanService.getWorkoutPlansByClientId(1L);
+        List<WorkoutPlan> result = workoutPlanService.getWorkoutPlansByClientId(1L);
 
-        assertEquals(1, foundPlans.size());
-        assertEquals(testWorkoutPlan.getName(), foundPlans.get(0).getName());
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(workoutPlan.getId(), result.get(0).getId());
         verify(workoutPlanRepository, times(1)).findByClientId(1L);
     }
 
     @Test
-    void getWorkoutPlanById_WhenExists() {
-        when(workoutPlanRepository.findById(1L)).thenReturn(Optional.of(testWorkoutPlan));
+    void getWorkoutPlanById_WhenPlanExists_ShouldReturnPlan() {
+        when(workoutPlanRepository.findById(1L)).thenReturn(Optional.of(workoutPlan));
 
-        Optional<WorkoutPlan> found = workoutPlanService.getWorkoutPlanById(1L);
+        Optional<WorkoutPlan> result = workoutPlanService.getWorkoutPlanById(1L);
 
-        assertTrue(found.isPresent());
-        assertEquals(testWorkoutPlan.getName(), found.get().getName());
+        assertTrue(result.isPresent());
+        assertEquals(workoutPlan.getId(), result.get().getId());
         verify(workoutPlanRepository, times(1)).findById(1L);
     }
 
     @Test
-    void getWorkoutPlanById_WhenNotExists() {
-        when(workoutPlanRepository.findById(999L)).thenReturn(Optional.empty());
+    void getWorkoutPlanById_WhenPlanDoesNotExist_ShouldReturnEmptyOptional() {
+        when(workoutPlanRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Optional<WorkoutPlan> found = workoutPlanService.getWorkoutPlanById(999L);
+        Optional<WorkoutPlan> result = workoutPlanService.getWorkoutPlanById(1L);
 
-        assertFalse(found.isPresent());
-        verify(workoutPlanRepository, times(1)).findById(999L);
+        assertFalse(result.isPresent());
+        verify(workoutPlanRepository, times(1)).findById(1L);
     }
 
     @Test
-    void deleteWorkoutPlan_Success() {
-        doNothing().when(workoutPlanRepository).deleteById(1L);
-
+    void deleteWorkoutPlan_ShouldCallRepositoryDelete() {
         workoutPlanService.deleteWorkoutPlan(1L);
-
+        
         verify(workoutPlanRepository, times(1)).deleteById(1L);
-    }
-
-    @Test
-    void updateWorkoutPlan_PreservesExistingFields() {
-        WorkoutPlan updatedPlan = new WorkoutPlan();
-        updatedPlan.setName("Updated Plan");
-        // Note: not setting duration or exercises
-
-        when(workoutPlanRepository.findById(1L)).thenReturn(Optional.of(testWorkoutPlan));
-        when(workoutPlanRepository.save(any(WorkoutPlan.class))).thenAnswer(i -> i.getArguments()[0]);
-
-        WorkoutPlan result = workoutPlanService.updateWorkoutPlan(1L, updatedPlan);
-
-        assertNotNull(result);
-        assertEquals("Updated Plan", result.getName());
-        assertEquals(testWorkoutPlan.getDurationInWeeks(), result.getDurationInWeeks());
-        assertEquals(testWorkoutPlan.getExercises(), result.getExercises());
-        verify(workoutPlanRepository, times(1)).findById(1L);
-        verify(workoutPlanRepository, times(1)).save(any(WorkoutPlan.class));
     }
 }

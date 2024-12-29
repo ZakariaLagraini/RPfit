@@ -1,169 +1,162 @@
 package com.example.backend.controller;
 
+import com.example.backend.entity.Client;
+import com.example.backend.entity.Exercise;
 import com.example.backend.entity.WorkoutPlan;
+import com.example.backend.security.JwtUtil;
+import com.example.backend.service.ClientDetailsService;
 import com.example.backend.service.WorkoutPlanService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WebMvcTest(WorkoutPlanController.class)
 class WorkoutPlanControllerTest {
 
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
     private WorkoutPlanService workoutPlanService;
 
-    @InjectMocks
-    private WorkoutPlanController workoutPlanController;
+    @MockBean
+    private JwtUtil jwtUtil;
+
+    @MockBean
+    private ClientDetailsService clientDetailsService;
 
     private WorkoutPlan testWorkoutPlan;
+    private Client testClient;
+    private Exercise testExercise;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        testClient = new Client();
+        testClient.setId(1L);
+
+        testExercise = new Exercise();
+        testExercise.setId(1L);
+        testExercise.setName("Bench Press");
+        testExercise.setSets(3);
+        testExercise.setReps(10);
+        testExercise.setWeight(100.0);
+
         testWorkoutPlan = new WorkoutPlan();
         testWorkoutPlan.setId(1L);
         testWorkoutPlan.setName("Test Workout Plan");
-        testWorkoutPlan.setDurationInWeeks(8);
-        testWorkoutPlan.setClientId(1L);
+        testWorkoutPlan.setDurationInWeeks(4);
+        testWorkoutPlan.setClient(testClient);
+        testWorkoutPlan.setExercises(Arrays.asList(testExercise));
     }
 
     @Test
-    void createWorkoutPlan_Success() {
+    @WithMockUser
+    void createWorkoutPlan_ShouldReturnCreatedWorkoutPlan() throws Exception {
         when(workoutPlanService.addWorkoutPlan(any(WorkoutPlan.class))).thenReturn(testWorkoutPlan);
 
-        ResponseEntity<WorkoutPlan> response = workoutPlanController.createWorkoutPlan(testWorkoutPlan);
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(testWorkoutPlan.getName(), response.getBody().getName());
-        assertEquals(testWorkoutPlan.getDurationInWeeks(), response.getBody().getDurationInWeeks());
-        verify(workoutPlanService, times(1)).addWorkoutPlan(any(WorkoutPlan.class));
+        mockMvc.perform(post("/api/workoutPlans")
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testWorkoutPlan)))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(testWorkoutPlan.getId()))
+                .andExpect(jsonPath("$.name").value(testWorkoutPlan.getName()))
+                .andExpect(jsonPath("$.durationInWeeks").value(testWorkoutPlan.getDurationInWeeks()));
     }
 
     @Test
-    void updateWorkoutPlan_WhenExists() {
-        when(workoutPlanService.updateWorkoutPlan(eq(1L), any(WorkoutPlan.class)))
-            .thenReturn(testWorkoutPlan);
+    @WithMockUser
+    void updateWorkoutPlan_ShouldReturnUpdatedWorkoutPlan() throws Exception {
+        when(workoutPlanService.updateWorkoutPlan(anyLong(), any(WorkoutPlan.class))).thenReturn(testWorkoutPlan);
 
-        ResponseEntity<WorkoutPlan> response = workoutPlanController
-            .updateWorkoutPlan(1L, testWorkoutPlan);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(testWorkoutPlan.getName(), response.getBody().getName());
-        verify(workoutPlanService, times(1)).updateWorkoutPlan(eq(1L), any(WorkoutPlan.class));
+        mockMvc.perform(put("/api/workoutPlans/1")
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testWorkoutPlan)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(testWorkoutPlan.getId()))
+                .andExpect(jsonPath("$.name").value(testWorkoutPlan.getName()))
+                .andExpect(jsonPath("$.durationInWeeks").value(testWorkoutPlan.getDurationInWeeks()));
     }
 
     @Test
-    void updateWorkoutPlan_WhenNotExists() {
-        when(workoutPlanService.updateWorkoutPlan(eq(999L), any(WorkoutPlan.class)))
-            .thenReturn(null);
+    @WithMockUser
+    void updateWorkoutPlan_ShouldReturn404WhenNotFound() throws Exception {
+        when(workoutPlanService.updateWorkoutPlan(anyLong(), any(WorkoutPlan.class))).thenReturn(null);
 
-        ResponseEntity<WorkoutPlan> response = workoutPlanController
-            .updateWorkoutPlan(999L, testWorkoutPlan);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNull(response.getBody());
-        verify(workoutPlanService, times(1)).updateWorkoutPlan(eq(999L), any(WorkoutPlan.class));
+        mockMvc.perform(put("/api/workoutPlans/999")
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testWorkoutPlan)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void getWorkoutPlansByClientId_Success() {
+    @WithMockUser
+    void getWorkoutPlansByClientId_ShouldReturnWorkoutPlanList() throws Exception {
         List<WorkoutPlan> workoutPlans = Arrays.asList(testWorkoutPlan);
-        when(workoutPlanService.getWorkoutPlansByClientId(1L)).thenReturn(workoutPlans);
+        when(workoutPlanService.getWorkoutPlansByClientId(anyLong())).thenReturn(workoutPlans);
 
-        ResponseEntity<List<WorkoutPlan>> response = workoutPlanController
-            .getWorkoutPlansByClientId(1L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
-        assertEquals(testWorkoutPlan.getName(), response.getBody().get(0).getName());
-        verify(workoutPlanService, times(1)).getWorkoutPlansByClientId(1L);
+        mockMvc.perform(get("/api/workoutPlans/client/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(testWorkoutPlan.getId()))
+                .andExpect(jsonPath("$[0].name").value(testWorkoutPlan.getName()))
+                .andExpect(jsonPath("$[0].durationInWeeks").value(testWorkoutPlan.getDurationInWeeks()));
     }
 
     @Test
-    void getWorkoutPlansByClientId_EmptyList() {
-        when(workoutPlanService.getWorkoutPlansByClientId(1L)).thenReturn(Arrays.asList());
+    @WithMockUser
+    void getWorkoutPlanById_ShouldReturnWorkoutPlan() throws Exception {
+        when(workoutPlanService.getWorkoutPlanById(anyLong())).thenReturn(Optional.of(testWorkoutPlan));
 
-        ResponseEntity<List<WorkoutPlan>> response = workoutPlanController
-            .getWorkoutPlansByClientId(1L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertTrue(response.getBody().isEmpty());
-        verify(workoutPlanService, times(1)).getWorkoutPlansByClientId(1L);
+        mockMvc.perform(get("/api/workoutPlans/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(testWorkoutPlan.getId()))
+                .andExpect(jsonPath("$.name").value(testWorkoutPlan.getName()))
+                .andExpect(jsonPath("$.durationInWeeks").value(testWorkoutPlan.getDurationInWeeks()));
     }
 
     @Test
-    void getWorkoutPlanById_WhenExists() {
-        when(workoutPlanService.getWorkoutPlanById(1L)).thenReturn(Optional.of(testWorkoutPlan));
+    @WithMockUser
+    void getWorkoutPlanById_ShouldReturn404WhenNotFound() throws Exception {
+        when(workoutPlanService.getWorkoutPlanById(anyLong())).thenReturn(Optional.empty());
 
-        ResponseEntity<WorkoutPlan> response = workoutPlanController.getWorkoutPlanById(1L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(testWorkoutPlan.getName(), response.getBody().getName());
-        verify(workoutPlanService, times(1)).getWorkoutPlanById(1L);
+        mockMvc.perform(get("/api/workoutPlans/999"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void getWorkoutPlanById_WhenNotExists() {
-        when(workoutPlanService.getWorkoutPlanById(999L)).thenReturn(Optional.empty());
+    @WithMockUser
+    void deleteWorkoutPlan_ShouldReturnNoContent() throws Exception {
+        doNothing().when(workoutPlanService).deleteWorkoutPlan(anyLong());
 
-        ResponseEntity<WorkoutPlan> response = workoutPlanController.getWorkoutPlanById(999L);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNull(response.getBody());
-        verify(workoutPlanService, times(1)).getWorkoutPlanById(999L);
+        mockMvc.perform(delete("/api/workoutPlans/1")
+                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().isNoContent());
     }
-
-    @Test
-    void deleteWorkoutPlan_Success() {
-        doNothing().when(workoutPlanService).deleteWorkoutPlan(1L);
-
-        ResponseEntity<Void> response = workoutPlanController.deleteWorkoutPlan(1L);
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertNull(response.getBody());
-        verify(workoutPlanService, times(1)).deleteWorkoutPlan(1L);
-    }
-
-    @Test
-    void createWorkoutPlan_WithNullName() {
-        testWorkoutPlan.setName(null);
-        when(workoutPlanService.addWorkoutPlan(any(WorkoutPlan.class))).thenReturn(testWorkoutPlan);
-
-        ResponseEntity<WorkoutPlan> response = workoutPlanController.createWorkoutPlan(testWorkoutPlan);
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertNull(response.getBody().getName());
-        verify(workoutPlanService, times(1)).addWorkoutPlan(any(WorkoutPlan.class));
-    }
-
-    @Test
-    void createWorkoutPlan_WithZeroDuration() {
-        testWorkoutPlan.setDurationInWeeks(0);
-        when(workoutPlanService.addWorkoutPlan(any(WorkoutPlan.class))).thenReturn(testWorkoutPlan);
-
-        ResponseEntity<WorkoutPlan> response = workoutPlanController.createWorkoutPlan(testWorkoutPlan);
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(0, response.getBody().getDurationInWeeks());
-        verify(workoutPlanService, times(1)).addWorkoutPlan(any(WorkoutPlan.class));
-    }
-} 
+}

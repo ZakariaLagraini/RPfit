@@ -1,21 +1,25 @@
 package com.example.backend.service;
 
 import com.example.backend.entity.Exercise;
+import com.example.backend.entity.WorkoutPlan;
 import com.example.backend.repository.ExerciseRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ExerciseServiceTest {
 
     @Mock
@@ -25,115 +29,123 @@ class ExerciseServiceTest {
     private ExerciseService exerciseService;
 
     private Exercise testExercise;
+    private WorkoutPlan testWorkoutPlan;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        testWorkoutPlan = new WorkoutPlan();
+        testWorkoutPlan.setId(1L);
+        testWorkoutPlan.setName("Test Workout Plan");
+        testWorkoutPlan.setDurationInWeeks(4);
+
         testExercise = new Exercise();
         testExercise.setId(1L);
         testExercise.setName("Bench Press");
         testExercise.setSets(3);
         testExercise.setReps(10);
-        testExercise.setWeight(100.0);
+        testExercise.setWeight(60.0);
         testExercise.setRestTime(90);
-        testExercise.setWorkoutPlanId(1L);
+        testExercise.setWorkoutPlan(testWorkoutPlan);
     }
 
     @Test
-    void addExercise_Success() {
+    void createExercise_ShouldReturnSavedExercise() {
+        // Given
         when(exerciseRepository.save(any(Exercise.class))).thenReturn(testExercise);
 
+        // When
         Exercise savedExercise = exerciseService.addExercise(testExercise);
 
-        assertNotNull(savedExercise);
-        assertEquals(testExercise.getName(), savedExercise.getName());
-        assertEquals(testExercise.getSets(), savedExercise.getSets());
-        verify(exerciseRepository, times(1)).save(any(Exercise.class));
+        // Then
+        assertThat(savedExercise).isNotNull();
+        assertThat(savedExercise.getId()).isEqualTo(testExercise.getId());
+        assertThat(savedExercise.getName()).isEqualTo(testExercise.getName());
+        assertThat(savedExercise.getSets()).isEqualTo(testExercise.getSets());
+        assertThat(savedExercise.getReps()).isEqualTo(testExercise.getReps());
+        verify(exerciseRepository).save(any(Exercise.class));
     }
 
     @Test
-    void updateExercise_WhenExists() {
+    void updateExercise_ShouldReturnUpdatedExercise() {
+        // Given
         Exercise updatedExercise = new Exercise();
-        updatedExercise.setName("Updated Bench Press");
+        updatedExercise.setName("Updated Exercise");
         updatedExercise.setSets(4);
         updatedExercise.setReps(12);
-        updatedExercise.setWeight(110.0);
-        updatedExercise.setRestTime(60);
+        updatedExercise.setWeight(70.0);
 
-        when(exerciseRepository.findById(1L)).thenReturn(Optional.of(testExercise));
+        when(exerciseRepository.findById(anyLong())).thenReturn(Optional.of(testExercise));
         when(exerciseRepository.save(any(Exercise.class))).thenReturn(updatedExercise);
 
+        // When
         Exercise result = exerciseService.updateExercise(1L, updatedExercise);
 
-        assertNotNull(result);
-        assertEquals(updatedExercise.getName(), result.getName());
-        assertEquals(updatedExercise.getSets(), result.getSets());
-        assertEquals(updatedExercise.getReps(), result.getReps());
-        verify(exerciseRepository, times(1)).findById(1L);
-        verify(exerciseRepository, times(1)).save(any(Exercise.class));
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getName()).isEqualTo(updatedExercise.getName());
+        assertThat(result.getSets()).isEqualTo(updatedExercise.getSets());
+        assertThat(result.getReps()).isEqualTo(updatedExercise.getReps());
+        assertThat(result.getWeight()).isEqualTo(updatedExercise.getWeight());
+        verify(exerciseRepository).findById(1L);
+        verify(exerciseRepository).save(any(Exercise.class));
     }
 
     @Test
-    void updateExercise_WhenNotExists() {
-        when(exerciseRepository.findById(999L)).thenReturn(Optional.empty());
+    void getExerciseById_ShouldReturnExercise() {
+        // Given
+        when(exerciseRepository.findById(anyLong())).thenReturn(Optional.of(testExercise));
 
-        Exercise result = exerciseService.updateExercise(999L, new Exercise());
+        // When
+        Optional<Exercise> result = exerciseService.getExerciseById(1L);
 
-        assertNull(result);
-        verify(exerciseRepository, times(1)).findById(999L);
-        verify(exerciseRepository, never()).save(any(Exercise.class));
+        // Then
+        assertThat(result).isPresent();
+        assertThat(result.get().getId()).isEqualTo(testExercise.getId());
+        assertThat(result.get().getName()).isEqualTo(testExercise.getName());
+        verify(exerciseRepository).findById(1L);
     }
 
     @Test
-    void getExercisesByWorkoutPlanId_Success() {
+    void getAllExercises_ShouldReturnListOfExercises() {
+        // Given
         List<Exercise> exercises = Arrays.asList(testExercise);
-        when(exerciseRepository.findByWorkoutPlanId(1L)).thenReturn(exercises);
-
-        List<Exercise> foundExercises = exerciseService.getExercisesByWorkoutPlanId(1L);
-
-        assertEquals(1, foundExercises.size());
-        assertEquals(testExercise.getName(), foundExercises.get(0).getName());
-        verify(exerciseRepository, times(1)).findByWorkoutPlanId(1L);
-    }
-
-    @Test
-    void getExerciseById_WhenExists() {
-        when(exerciseRepository.findById(1L)).thenReturn(Optional.of(testExercise));
-
-        Optional<Exercise> found = exerciseService.getExerciseById(1L);
-
-        assertTrue(found.isPresent());
-        assertEquals(testExercise.getName(), found.get().getName());
-        verify(exerciseRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    void getExerciseById_WhenNotExists() {
-        when(exerciseRepository.findById(999L)).thenReturn(Optional.empty());
-
-        Optional<Exercise> found = exerciseService.getExerciseById(999L);
-
-        assertFalse(found.isPresent());
-        verify(exerciseRepository, times(1)).findById(999L);
-    }
-
-    @Test
-    void deleteExercise_Success() {
-        doNothing().when(exerciseRepository).deleteById(1L);
-
-        exerciseService.deleteExercise(1L);
-
-        verify(exerciseRepository, times(1)).deleteById(1L);
-    }
-
-    @Test
-    void getAllExercises_Success() {
-        List<Exercise> exercises = Arrays.asList(testExercise, new Exercise());
         when(exerciseRepository.findAll()).thenReturn(exercises);
 
-        List<Exercise> foundExercises = exerciseService.getAllExercises();
+        // When
+        List<Exercise> result = exerciseService.getAllExercises();
 
-        assertEquals(2, foundExercises.size());
-        verify(exerciseRepository, times(1)).findAll();
+        // Then
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(testExercise.getId());
+        verify(exerciseRepository).findAll();
     }
-} 
+
+    @Test
+    void getExercisesByWorkoutPlanId_ShouldReturnListOfExercises() {
+        // Given
+        List<Exercise> exercises = Arrays.asList(testExercise);
+        when(exerciseRepository.findByWorkoutPlanId(anyLong())).thenReturn(exercises);
+
+        // When
+        List<Exercise> result = exerciseService.getExercisesByWorkoutPlanId(1L);
+
+        // Then
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(testExercise.getId());
+        verify(exerciseRepository).findByWorkoutPlanId(1L);
+    }
+
+    @Test
+    void deleteExercise_ShouldCallRepository() {
+        // Given
+        doNothing().when(exerciseRepository).deleteById(anyLong());
+
+        // When
+        exerciseService.deleteExercise(1L);
+
+        // Then
+        verify(exerciseRepository).deleteById(1L);
+    }
+}

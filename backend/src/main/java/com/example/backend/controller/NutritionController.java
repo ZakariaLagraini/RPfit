@@ -17,7 +17,11 @@ public class NutritionController {
 
     @GetMapping("/nutrition/{clientId}")
     public ResponseEntity<Nutrition> getNutrition(@PathVariable Long clientId) {
-        Nutrition nutrition = nutritionService.calculateNutrition(clientId);
-        return ResponseEntity.ok(nutrition);
+        try {
+            Nutrition nutrition = nutritionService.calculateNutrition(clientId);
+            return ResponseEntity.ok(nutrition);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

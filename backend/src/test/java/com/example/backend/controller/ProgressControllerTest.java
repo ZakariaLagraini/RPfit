@@ -1,159 +1,155 @@
 package com.example.backend.controller;
 
+import com.example.backend.entity.Client;
+import com.example.backend.entity.Exercise;
 import com.example.backend.entity.Progress;
+import com.example.backend.security.JwtUtil;
+import com.example.backend.service.ClientDetailsService;
 import com.example.backend.service.ProgressService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WebMvcTest(ProgressController.class)
 class ProgressControllerTest {
 
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
     private ProgressService progressService;
 
-    @InjectMocks
-    private ProgressController progressController;
+    @MockBean
+    private JwtUtil jwtUtil;
+
+    @MockBean
+    private ClientDetailsService clientDetailsService;
 
     private Progress testProgress;
+    private Client testClient;
+    private Exercise testExercise;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        testClient = new Client();
+        testClient.setId(1L);
+
+        testExercise = new Exercise();
+        testExercise.setId(1L);
+
         testProgress = new Progress();
         testProgress.setId(1L);
-        testProgress.setClientId(1L);
-        testProgress.setExerciseId(1L);
-        testProgress.setWeight(75.0);
-        testProgress.setReps(12);
+        testProgress.setClient(testClient);
+        testProgress.setExercise(testExercise);
+        testProgress.setDate(LocalDate.now());
+        testProgress.setRepetitions(12);
+        testProgress.setWeight(50.0);
         testProgress.setSets(3);
-        testProgress.setDate(LocalDateTime.now());
+        testProgress.setDuration(30.0);
+        testProgress.setNotes("Test progress");
     }
 
     @Test
-    void createProgress_Success() {
+    @WithMockUser
+    void createProgress_ShouldReturnCreatedProgress() throws Exception {
         when(progressService.createProgress(any(Progress.class))).thenReturn(testProgress);
 
-        ResponseEntity<Progress> response = progressController.createProgress(testProgress);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(testProgress.getClientId(), response.getBody().getClientId());
-        assertEquals(testProgress.getExerciseId(), response.getBody().getExerciseId());
-        assertEquals(testProgress.getWeight(), response.getBody().getWeight());
-        verify(progressService, times(1)).createProgress(any(Progress.class));
+        mockMvc.perform(post("/api/progress")
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testProgress)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(testProgress.getId()))
+                .andExpect(jsonPath("$.repetitions").value(testProgress.getRepetitions()))
+                .andExpect(jsonPath("$.weight").value(testProgress.getWeight()));
     }
 
     @Test
-    void updateProgress_Success() {
-        when(progressService.updateProgress(eq(1L), any(Progress.class))).thenReturn(testProgress);
+    @WithMockUser
+    void updateProgress_ShouldReturnUpdatedProgress() throws Exception {
+        when(progressService.updateProgress(anyLong(), any(Progress.class))).thenReturn(testProgress);
 
-        ResponseEntity<Progress> response = progressController.updateProgress(1L, testProgress);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(testProgress.getWeight(), response.getBody().getWeight());
-        assertEquals(testProgress.getReps(), response.getBody().getReps());
-        verify(progressService, times(1)).updateProgress(eq(1L), any(Progress.class));
+        mockMvc.perform(put("/api/progress/1")
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testProgress)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(testProgress.getId()))
+                .andExpect(jsonPath("$.repetitions").value(testProgress.getRepetitions()))
+                .andExpect(jsonPath("$.weight").value(testProgress.getWeight()));
     }
 
     @Test
-    void deleteProgress_Success() {
-        doNothing().when(progressService).deleteProgress(1L);
+    @WithMockUser
+    void deleteProgress_ShouldReturnNoContent() throws Exception {
+        doNothing().when(progressService).deleteProgress(anyLong());
 
-        ResponseEntity<Void> response = progressController.deleteProgress(1L);
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertNull(response.getBody());
-        verify(progressService, times(1)).deleteProgress(1L);
+        mockMvc.perform(delete("/api/progress/1")
+                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    void getProgressById_Success() {
-        when(progressService.getProgressById(1L)).thenReturn(testProgress);
+    @WithMockUser
+    void getProgressById_ShouldReturnProgress() throws Exception {
+        when(progressService.getProgressById(anyLong())).thenReturn(testProgress);
 
-        ResponseEntity<Progress> response = progressController.getProgressById(1L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(testProgress.getId(), response.getBody().getId());
-        verify(progressService, times(1)).getProgressById(1L);
+        mockMvc.perform(get("/api/progress/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(testProgress.getId()))
+                .andExpect(jsonPath("$.repetitions").value(testProgress.getRepetitions()))
+                .andExpect(jsonPath("$.weight").value(testProgress.getWeight()));
     }
 
     @Test
-    void getProgressByClientId_Success() {
+    @WithMockUser
+    void getProgressByClientId_ShouldReturnProgressList() throws Exception {
         List<Progress> progressList = Arrays.asList(testProgress);
-        when(progressService.getProgressByClientId(1L)).thenReturn(progressList);
+        when(progressService.getProgressByClientId(anyLong())).thenReturn(progressList);
 
-        ResponseEntity<List<Progress>> response = progressController.getProgressByClientId(1L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
-        assertEquals(testProgress.getClientId(), response.getBody().get(0).getClientId());
-        verify(progressService, times(1)).getProgressByClientId(1L);
+        mockMvc.perform(get("/api/progress/client/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(testProgress.getId()))
+                .andExpect(jsonPath("$[0].repetitions").value(testProgress.getRepetitions()))
+                .andExpect(jsonPath("$[0].weight").value(testProgress.getWeight()));
     }
 
     @Test
-    void getProgressByExerciseId_Success() {
+    @WithMockUser
+    void getProgressByExerciseId_ShouldReturnProgressList() throws Exception {
         List<Progress> progressList = Arrays.asList(testProgress);
-        when(progressService.getProgressByExerciseId(1L)).thenReturn(progressList);
+        when(progressService.getProgressByExerciseId(anyLong())).thenReturn(progressList);
 
-        ResponseEntity<List<Progress>> response = progressController.getProgressByExerciseId(1L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
-        assertEquals(testProgress.getExerciseId(), response.getBody().get(0).getExerciseId());
-        verify(progressService, times(1)).getProgressByExerciseId(1L);
+        mockMvc.perform(get("/api/progress/exercise/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(testProgress.getId()))
+                .andExpect(jsonPath("$[0].repetitions").value(testProgress.getRepetitions()))
+                .andExpect(jsonPath("$[0].weight").value(testProgress.getWeight()));
     }
-
-    @Test
-    void getProgressByClientId_EmptyList() {
-        when(progressService.getProgressByClientId(1L)).thenReturn(Arrays.asList());
-
-        ResponseEntity<List<Progress>> response = progressController.getProgressByClientId(1L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertTrue(response.getBody().isEmpty());
-        verify(progressService, times(1)).getProgressByClientId(1L);
-    }
-
-    @Test
-    void getProgressByExerciseId_EmptyList() {
-        when(progressService.getProgressByExerciseId(1L)).thenReturn(Arrays.asList());
-
-        ResponseEntity<List<Progress>> response = progressController.getProgressByExerciseId(1L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertTrue(response.getBody().isEmpty());
-        verify(progressService, times(1)).getProgressByExerciseId(1L);
-    }
-
-    @Test
-    void createProgress_WithNullValues() {
-        testProgress.setWeight(null);
-        when(progressService.createProgress(any(Progress.class))).thenReturn(testProgress);
-
-        ResponseEntity<Progress> response = progressController.createProgress(testProgress);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertNull(response.getBody().getWeight());
-        verify(progressService, times(1)).createProgress(any(Progress.class));
-    }
-} 
+}

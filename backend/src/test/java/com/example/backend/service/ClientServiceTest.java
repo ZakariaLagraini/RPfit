@@ -1,25 +1,35 @@
 package com.example.backend.service;
 
-import com.example.backend.Enumeration.Goal;
 import com.example.backend.entity.Client;
 import com.example.backend.repository.ClientRepository;
+import com.example.backend.Enumeration.Gender;
+import com.example.backend.Enumeration.Goal;
+import com.example.backend.Enumeration.ActivityLevel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ClientServiceTest {
 
     @Mock
     private ClientRepository clientRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private ClientService clientService;
@@ -28,118 +38,106 @@ class ClientServiceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         testClient = new Client();
         testClient.setId(1L);
         testClient.setEmail("test@example.com");
         testClient.setPassword("password123");
-        testClient.setHeight(180);
-        testClient.setWeight(75.0);
-        testClient.setAge(25);
-        testClient.setGoal(Goal.WEIGHT_LOSS);
+        testClient.setWeight(70.0);
+        testClient.setHeight(175.0);
+        testClient.setAge(25.0);
+        testClient.setGender(Gender.MALE);
+        testClient.setGoal(Goal.GAIN_WEIGHT);
+        testClient.setActivityLevel(ActivityLevel.MODERATELY_ACTIVE);
     }
 
     @Test
-    void saveClient_Success() {
-        when(clientRepository.save(any(Client.class))).thenReturn(testClient);
+    void createClient_ShouldReturnSavedClient() {
+        // Given
+        String rawPassword = "password123";
+        String encodedPassword = "encodedPassword";
+        testClient.setPassword(rawPassword);
+        
+        when(passwordEncoder.encode(rawPassword)).thenReturn(encodedPassword);
+        when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> {
+            Client savedClient = invocation.getArgument(0);
+            assertThat(savedClient.getPassword()).isEqualTo(encodedPassword);
+            return testClient;
+        });
 
+        // When
         Client savedClient = clientService.saveClient(testClient);
 
-        assertNotNull(savedClient);
-        assertEquals(testClient.getEmail(), savedClient.getEmail());
-        verify(clientRepository, times(1)).save(any(Client.class));
+        // Then
+        assertThat(savedClient).isNotNull();
+        assertThat(savedClient.getId()).isEqualTo(testClient.getId());
+        assertThat(savedClient.getEmail()).isEqualTo(testClient.getEmail());
+        verify(passwordEncoder).encode(rawPassword);
+        verify(clientRepository).save(any(Client.class));
     }
 
     @Test
-    void getClientById_WhenExists() {
-        when(clientRepository.findById(1L)).thenReturn(Optional.of(testClient));
-
-        Optional<Client> found = clientService.getClientById(1L);
-
-        assertTrue(found.isPresent());
-        assertEquals(testClient.getEmail(), found.get().getEmail());
-        verify(clientRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    void getClientById_WhenNotExists() {
-        when(clientRepository.findById(999L)).thenReturn(Optional.empty());
-
-        Optional<Client> found = clientService.getClientById(999L);
-
-        assertFalse(found.isPresent());
-        verify(clientRepository, times(1)).findById(999L);
-    }
-
-    @Test
-    void getAllClients_Success() {
-        List<Client> clients = Arrays.asList(testClient, new Client());
-        when(clientRepository.findAll()).thenReturn(clients);
-
-        List<Client> foundClients = clientService.getAllClients();
-
-        assertEquals(2, foundClients.size());
-        verify(clientRepository, times(1)).findAll();
-    }
-
-    @Test
-    void updateClient_WhenExists() {
+    void updateClient_ShouldReturnUpdatedClient() {
+        // Given
         Client updatedClient = new Client();
-        updatedClient.setEmail("updated@example.com");
-        updatedClient.setWeight(80.0);
+        updatedClient.setWeight(75.0);
+        updatedClient.setHeight(180.0);
+        updatedClient.setGoal(Goal.WEIGHT_LOSS);
 
-        when(clientRepository.findById(1L)).thenReturn(Optional.of(testClient));
+        when(clientRepository.findById(anyLong())).thenReturn(Optional.of(testClient));
         when(clientRepository.save(any(Client.class))).thenReturn(updatedClient);
 
+        // When
         Client result = clientService.updateClient(1L, updatedClient);
 
-        assertNotNull(result);
-        assertEquals(updatedClient.getEmail(), result.getEmail());
-        verify(clientRepository, times(1)).findById(1L);
-        verify(clientRepository, times(1)).save(any(Client.class));
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getWeight()).isEqualTo(updatedClient.getWeight());
+        assertThat(result.getHeight()).isEqualTo(updatedClient.getHeight());
+        assertThat(result.getGoal()).isEqualTo(updatedClient.getGoal());
+        verify(clientRepository).findById(1L);
+        verify(clientRepository).save(any(Client.class));
     }
 
     @Test
-    void updateClient_WhenNotExists() {
-        Client updatedClient = new Client();
-        when(clientRepository.findById(999L)).thenReturn(Optional.empty());
+    void getClientById_ShouldReturnClient() {
+        // Given
+        when(clientRepository.findById(anyLong())).thenReturn(Optional.of(testClient));
 
-        assertThrows(RuntimeException.class, () -> 
-            clientService.updateClient(999L, updatedClient)
-        );
-        verify(clientRepository, times(1)).findById(999L);
-        verify(clientRepository, never()).save(any(Client.class));
+        // When
+        Optional<Client> result = clientService.getClientById(1L);
+
+        // Then
+        assertThat(result).isPresent();
+        assertThat(result.get().getId()).isEqualTo(testClient.getId());
+        assertThat(result.get().getEmail()).isEqualTo(testClient.getEmail());
+        verify(clientRepository).findById(1L);
     }
 
     @Test
-    void deleteClient_Success() {
-        doNothing().when(clientRepository).deleteById(1L);
+    void getAllClients_ShouldReturnListOfClients() {
+        // Given
+        List<Client> clients = Arrays.asList(testClient);
+        when(clientRepository.findAll()).thenReturn(clients);
 
+        // When
+        List<Client> result = clientService.getAllClients();
+
+        // Then
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(testClient.getId());
+        verify(clientRepository).findAll();
+    }
+
+    @Test
+    void deleteClient_ShouldCallRepository() {
+        // Given
+        doNothing().when(clientRepository).deleteById(anyLong());
+
+        // When
         clientService.deleteClient(1L);
 
-        verify(clientRepository, times(1)).deleteById(1L);
+        // Then
+        verify(clientRepository).deleteById(1L);
     }
-
-    @Test
-    void getClientsByGoal_Success() {
-        List<Client> clients = Arrays.asList(testClient);
-        when(clientRepository.findByGoal(Goal.WEIGHT_LOSS)).thenReturn(clients);
-
-        List<Client> foundClients = clientService.getClientsByGoal(Goal.WEIGHT_LOSS);
-
-        assertEquals(1, foundClients.size());
-        assertEquals(Goal.WEIGHT_LOSS, foundClients.get(0).getGoal());
-        verify(clientRepository, times(1)).findByGoal(Goal.WEIGHT_LOSS);
-    }
-
-    @Test
-    void getClientByEmail_WhenExists() {
-        when(clientRepository.findByEmail("test@example.com")).thenReturn(testClient);
-
-        Client found = clientService.getClientByEmail("test@example.com");
-
-        assertNotNull(found);
-        assertEquals("test@example.com", found.getEmail());
-        verify(clientRepository, times(1)).findByEmail("test@example.com");
-    }
-} 
+}

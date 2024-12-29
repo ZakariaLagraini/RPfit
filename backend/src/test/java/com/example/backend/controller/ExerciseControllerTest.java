@@ -1,130 +1,176 @@
 package com.example.backend.controller;
 
 import com.example.backend.entity.Exercise;
+import com.example.backend.entity.WorkoutPlan;
+import com.example.backend.security.JwtUtil;
+import com.example.backend.service.ClientDetailsService;
 import com.example.backend.service.ExerciseService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class ExerciseControllerTest {
+@WebMvcTest(ExerciseController.class)
+public class ExerciseControllerTest {
 
-    @Mock
+    @Autowired
+    private WebApplicationContext context;
+
+    private MockMvc mockMvc;
+
+    @MockBean
     private ExerciseService exerciseService;
 
-    @InjectMocks
-    private ExerciseController exerciseController;
+    @MockBean
+    private JwtUtil jwtUtil;
+
+    @MockBean
+    private ClientDetailsService clientDetailsService;
 
     private Exercise testExercise;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
+
         testExercise = new Exercise();
         testExercise.setId(1L);
         testExercise.setName("Bench Press");
         testExercise.setSets(3);
         testExercise.setReps(10);
-        testExercise.setWorkoutPlanId(1L);
+        testExercise.setWeight(60.0);
+        testExercise.setRestTime(90);
+        testExercise.setWorkoutPlan(new WorkoutPlan());
     }
 
     @Test
-    void createExercise_Success() {
+    @WithMockUser(roles = "USER")
+    void createExercise_Success() throws Exception {
         when(exerciseService.addExercise(any(Exercise.class))).thenReturn(testExercise);
 
-        ResponseEntity<Exercise> response = exerciseController.createExercise(testExercise);
+        mockMvc.perform(post("/api/exercises")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testExercise)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Bench Press"))
+                .andExpect(jsonPath("$.sets").value(3))
+                .andExpect(jsonPath("$.reps").value(10))
+                .andExpect(jsonPath("$.weight").value(60.0))
+                .andExpect(jsonPath("$.restTime").value(90));
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(testExercise, response.getBody());
-        verify(exerciseService, times(1)).addExercise(any(Exercise.class));
+        verify(exerciseService).addExercise(any(Exercise.class));
     }
 
     @Test
-    void updateExercise_WhenExists() {
+    @WithMockUser(roles = "USER")
+    void updateExercise_Success() throws Exception {
         when(exerciseService.updateExercise(eq(1L), any(Exercise.class))).thenReturn(testExercise);
 
-        ResponseEntity<Exercise> response = exerciseController.updateExercise(1L, testExercise);
+        mockMvc.perform(put("/api/exercises/1")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testExercise)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Bench Press"));
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(testExercise, response.getBody());
-        verify(exerciseService, times(1)).updateExercise(eq(1L), any(Exercise.class));
+        verify(exerciseService).updateExercise(eq(1L), any(Exercise.class));
     }
 
     @Test
-    void updateExercise_WhenNotExists() {
-        when(exerciseService.updateExercise(eq(999L), any(Exercise.class))).thenReturn(null);
+    @WithMockUser(roles = "USER")
+    void updateExercise_NotFound() throws Exception {
+        when(exerciseService.updateExercise(eq(1L), any(Exercise.class))).thenReturn(null);
 
-        ResponseEntity<Exercise> response = exerciseController.updateExercise(999L, testExercise);
+        mockMvc.perform(put("/api/exercises/1")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testExercise)))
+                .andExpect(status().isNotFound());
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNull(response.getBody());
-        verify(exerciseService, times(1)).updateExercise(eq(999L), any(Exercise.class));
+        verify(exerciseService).updateExercise(eq(1L), any(Exercise.class));
     }
 
     @Test
-    void getExercisesByWorkoutPlanId_Success() {
-        List<Exercise> exercises = Arrays.asList(testExercise);
-        when(exerciseService.getExercisesByWorkoutPlanId(1L)).thenReturn(exercises);
+    @WithMockUser(roles = "USER")
+    void getExercisesByWorkoutPlanId_Success() throws Exception {
+        when(exerciseService.getExercisesByWorkoutPlanId(1L))
+                .thenReturn(Arrays.asList(testExercise));
 
-        ResponseEntity<List<Exercise>> response = exerciseController.getExercisesByWorkoutPlanId(1L);
+        mockMvc.perform(get("/api/exercises/workoutPlan/1")
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Bench Press"));
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(exercises, response.getBody());
-        verify(exerciseService, times(1)).getExercisesByWorkoutPlanId(1L);
+        verify(exerciseService).getExercisesByWorkoutPlanId(1L);
     }
 
     @Test
-    void getExerciseById_WhenExists() {
+    @WithMockUser(roles = "USER")
+    void getExerciseById_Success() throws Exception {
         when(exerciseService.getExerciseById(1L)).thenReturn(Optional.of(testExercise));
 
-        ResponseEntity<Exercise> response = exerciseController.getExerciseById(1L);
+        mockMvc.perform(get("/api/exercises/1")
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Bench Press"));
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(testExercise, response.getBody());
-        verify(exerciseService, times(1)).getExerciseById(1L);
+        verify(exerciseService).getExerciseById(1L);
     }
 
     @Test
-    void getExerciseById_WhenNotExists() {
-        when(exerciseService.getExerciseById(999L)).thenReturn(Optional.empty());
+    @WithMockUser(roles = "USER")
+    void getExerciseById_NotFound() throws Exception {
+        when(exerciseService.getExerciseById(1L)).thenReturn(Optional.empty());
 
-        ResponseEntity<Exercise> response = exerciseController.getExerciseById(999L);
+        mockMvc.perform(get("/api/exercises/1")
+                .with(csrf()))
+                .andExpect(status().isNotFound());
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNull(response.getBody());
-        verify(exerciseService, times(1)).getExerciseById(999L);
+        verify(exerciseService).getExerciseById(1L);
     }
 
     @Test
-    void deleteExercise_Success() {
-        doNothing().when(exerciseService).deleteExercise(1L);
+    @WithMockUser(roles = "USER")
+    void deleteExercise_Success() throws Exception {
+        mockMvc.perform(delete("/api/exercises/1")
+                .with(csrf()))
+                .andExpect(status().isNoContent());
 
-        ResponseEntity<Void> response = exerciseController.deleteExercise(1L);
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(exerciseService, times(1)).deleteExercise(1L);
+        verify(exerciseService).deleteExercise(1L);
     }
 
     @Test
-    void getAllExercises_Success() {
-        List<Exercise> exercises = Arrays.asList(testExercise);
-        when(exerciseService.getAllExercises()).thenReturn(exercises);
+    @WithMockUser(roles = "USER")
+    void getAllExercises_Success() throws Exception {
+        when(exerciseService.getAllExercises()).thenReturn(Arrays.asList(testExercise));
 
-        ResponseEntity<List<Exercise>> response = exerciseController.getAllExercises();
+        mockMvc.perform(get("/api/exercises/all")
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Bench Press"));
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(exercises, response.getBody());
-        verify(exerciseService, times(1)).getAllExercises();
+        verify(exerciseService).getAllExercises();
     }
-} 
+}

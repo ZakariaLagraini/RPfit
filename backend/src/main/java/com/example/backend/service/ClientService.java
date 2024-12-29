@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.Enumeration.Goal;
 import com.example.backend.entity.Client;
 import com.example.backend.repository.ClientRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,12 +12,15 @@ import java.util.Optional;
 @Service
 public class ClientService {
     private final ClientRepository clientRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public ClientService(ClientRepository clientRepository) {
+    public ClientService(ClientRepository clientRepository, PasswordEncoder passwordEncoder) {
         this.clientRepository = clientRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Client saveClient(Client client) {
+        client.setPassword(passwordEncoder.encode(client.getPassword()));
         return clientRepository.save(client);
     }
 
