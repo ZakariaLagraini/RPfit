@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'workout_screen.dart';
-import 'stats_screen.dart';
 import 'nutrition_screen.dart';
+import 'stats_screen.dart';
+import 'profile_screen.dart';
+import 'package:rpstrengh/src/services/secure_storage.dart';
+import 'package:rpstrengh/src/screens/welcome_page.dart';
+import 'package:rpstrengh/src/services/workout_plan_service.dart';
+import 'package:rpstrengh/src/models/workout_plan.dart';
+import 'package:rpstrengh/src/services/client_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,10 +20,10 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const HomePage(),
+    const HomeContent(),
     const WorkoutScreen(),
-    const StatsPage(),
-    const ProfilePage(),
+    const StatsScreen(),
+    const ProfileScreen(),
   ];
 
   @override
@@ -60,8 +66,53 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomeContent extends StatefulWidget {
+  const HomeContent({super.key});
+
+  @override
+  State<HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+  final WorkoutPlanService _workoutPlanService = WorkoutPlanService();
+  final ClientService _clientService = ClientService();
+  List<WorkoutPlan> _workoutPlans = [];
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWorkoutPlans();
+  }
+
+  Future<void> _loadWorkoutPlans() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Get the client profile first
+      final client = await _clientService.getProfile();
+
+      // Use the client's ID to fetch workout plans
+      final workoutPlans =
+          await _workoutPlanService.getWorkoutPlansByClientId(client.id);
+
+      setState(() {
+        _workoutPlans = workoutPlans;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load workout plans: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,15 +140,36 @@ class HomePage extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const NutritionScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const NutritionScreen()),
                 );
               },
             ),
             ListTile(
               leading: const Icon(Icons.exit_to_app),
-              title: const Text('Exit'),
-              onTap: () {
-                Navigator.pop(context);
+              title: const Text('Logout'),
+              onTap: () async {
+                try {
+                  // Clear the stored token
+                  await SecureStorage.deleteToken();
+
+                  // Navigate to welcome page and remove all previous routes
+                  if (context.mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WelcomePage(),
+                      ),
+                      (route) => false, // This removes all previous routes
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Logout failed: ${e.toString()}')),
+                    );
+                  }
+                }
               },
             ),
           ],
@@ -165,32 +237,32 @@ class HomePage extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Categories grid
-                GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 1.5,
-                  children: const [
-                    WorkoutCategoryCard(
-                      title: 'TREADMILL',
-                      imagePath: 'assets/images/body.jpg',
-                    ),
-                    WorkoutCategoryCard(
-                      title: 'OUTDOOR\nRUNNING',
-                      imagePath: 'assets/images/chest.jpg',
-                    ),
-                    WorkoutCategoryCard(
-                      title: 'STRENGTH\nTRAINING',
-                      imagePath: 'assets/images/challenge_fullbody.jpg',
-                    ),
-                    WorkoutCategoryCard(
-                      title: 'STRETCHING',
-                      imagePath: 'assets/images/abs.jpg',
-                    ),
-                  ],
-                ),
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 1.5,
+                        children: _workoutPlans.map((plan) {
+                          return WorkoutCategoryCard(
+                            title: plan.name.toUpperCase(),
+                            subtitle: '${plan.durationInWeeks} WEEKS',
+                            imagePath:
+                                'assets/images/body.jpg', // You might want to add image URL to your model
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const WorkoutScreen(),
+                                ),
+                              );
+                            },
+                          );
+                        }).toList(),
+                      ),
 
                 const SizedBox(height: 24),
 
@@ -209,7 +281,8 @@ class HomePage extends StatelessWidget {
                       onPressed: () {},
                       child: const Text(
                         'See all >',
-                        style: TextStyle(color: Color.fromARGB(255, 243, 33, 51)),
+                        style:
+                            TextStyle(color: Color.fromARGB(255, 243, 33, 51)),
                       ),
                     ),
                   ],
@@ -248,23 +321,22 @@ class HomePage extends StatelessWidget {
 
 class WorkoutCategoryCard extends StatelessWidget {
   final String title;
+  final String subtitle;
   final String imagePath;
+  final VoidCallback onTap;
 
   const WorkoutCategoryCard({
     super.key,
     required this.title,
+    required this.subtitle,
     required this.imagePath,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const WorkoutScreen()),
-        );
-      },
+      onTap: onTap,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Stack(
@@ -288,16 +360,27 @@ class WorkoutCategoryCard extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(12),
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -376,20 +459,3 @@ class ProgramCard extends StatelessWidget {
     );
   }
 }
-
-
-
-
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Profile Page'),
-      ),
-    );
-  }
-}
-

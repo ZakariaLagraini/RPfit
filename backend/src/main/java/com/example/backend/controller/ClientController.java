@@ -81,4 +81,15 @@ public class ClientController {
         List<Client> clients = clientService.getClientsByGoal(goal);
         return ResponseEntity.ok(clients);
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<Client> getClientProfile(Authentication authentication) {
+        String email = authentication.getName();
+        Client client = clientService.getClientByEmail(email);
+
+        // Remove sensitive information before returning
+        client.setPassword(null);
+
+        return ResponseEntity.ok(client);
+    }
 }

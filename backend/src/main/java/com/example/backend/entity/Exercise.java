@@ -1,5 +1,6 @@
 package com.example.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class Exercise {
     private double weight; // weight used in kg
     private int restTime; // rest time between sets in seconds
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "workout_plan_id")
     private WorkoutPlan workoutPlan;

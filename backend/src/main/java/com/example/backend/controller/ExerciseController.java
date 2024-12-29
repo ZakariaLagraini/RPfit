@@ -60,4 +60,10 @@ public class ExerciseController {
         exerciseService.deleteExercise(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Exercise>> getAllExercises() {
+        List<Exercise> exercises = exerciseService.getAllExercises();
+        return new ResponseEntity<>(exercises, HttpStatus.OK);
+    }
 }

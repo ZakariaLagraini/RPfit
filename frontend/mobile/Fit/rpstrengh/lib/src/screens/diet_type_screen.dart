@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpstrengh/src/screens/diet_goal_screen.dart';
+import 'package:rpstrengh/src/models/user_registration_data.dart';
 
 class DietTypeScreen extends StatefulWidget {
   const DietTypeScreen({super.key});
@@ -61,7 +62,7 @@ class _DietTypeScreenState extends State<DietTypeScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: selectedDietType != null 
+                onPressed: selectedDietType != null
                     ? () {
                         Navigator.push(
                           context,
@@ -69,10 +70,11 @@ class _DietTypeScreenState extends State<DietTypeScreen> {
                             builder: (context) => const DietGoalScreen(),
                           ),
                         );
-                      } 
+                      }
                     : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: selectedDietType != null ? Colors.red : Colors.red[100],
+                  backgroundColor:
+                      selectedDietType != null ? Colors.red : Colors.red[100],
                   padding: const EdgeInsets.all(15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
@@ -96,6 +98,7 @@ class _DietTypeScreenState extends State<DietTypeScreen> {
       onTap: () {
         setState(() {
           selectedDietType = title;
+          UserRegistrationData.dietType = title;
         });
       },
       child: Container(

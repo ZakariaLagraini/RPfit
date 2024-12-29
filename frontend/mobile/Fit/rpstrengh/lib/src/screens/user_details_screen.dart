@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpstrengh/src/screens/diet_type_screen.dart';
+import 'package:rpstrengh/src/models/user_registration_data.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   const UserDetailsScreen({super.key});
@@ -18,11 +19,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
   // Add this method to check completion
   bool _isFormComplete() {
-    return selectedSex == null &&
-           weight == null &&
-           height == null &&
-           age == null &&
-           bodyFat == null;
+    return selectedSex != null &&
+        weight != null &&
+        height != null &&
+        age != null &&
+        bodyFat != null;
   }
 
   @override
@@ -95,26 +96,30 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             _buildDetailRow('Weight', weight, () => _showWeightPicker(context)),
             _buildDetailRow('Height', height, () => _showHeightPicker(context)),
             _buildDetailRow('Age', age, () => _showAgePicker(context)),
-            _buildDetailRow('Body fat %', bodyFat, () => _showBodyFatPicker(context), showInfo: true),
+            _buildDetailRow(
+                'Body fat %', bodyFat, () => _showBodyFatPicker(context),
+                showInfo: true),
             const Spacer(),
             _buildSecuritySection(),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _isFormComplete() 
-                  ? () {
-                      // Navigate to next screen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DietTypeScreen(), // Replace with your next screen
-                        ),
-                      );
-                    } 
-                  : null,
+                onPressed: _isFormComplete()
+                    ? () {
+                        // Navigate to next screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const DietTypeScreen(), // Replace with your next screen
+                          ),
+                        );
+                      }
+                    : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _isFormComplete() ? Colors.red : Colors.red[100],
+                  backgroundColor:
+                      _isFormComplete() ? Colors.red : Colors.red[100],
                   padding: const EdgeInsets.all(15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
@@ -123,7 +128,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 child: Text(
                   'Continue',
                   style: TextStyle(
-                    color: _isFormComplete() ? Colors.white : Colors.white.withOpacity(0.5),
+                    color: _isFormComplete()
+                        ? Colors.white
+                        : Colors.white.withOpacity(0.5),
                   ),
                 ),
               ),
@@ -134,7 +141,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     );
   }
 
-  Widget _buildDetailRow(String label, String? value, VoidCallback onTap, {bool showInfo = false}) {
+  Widget _buildDetailRow(String label, String? value, VoidCallback onTap,
+      {bool showInfo = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15),
       child: Row(
@@ -143,8 +151,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             label,
             style: const TextStyle(fontSize: 18),
           ),
-          if (showInfo) 
-            const Icon(Icons.help_outline, color: Colors.grey),
+          if (showInfo) const Icon(Icons.help_outline, color: Colors.grey),
           const Spacer(),
           value != null
               ? Text(
@@ -264,7 +271,10 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   Widget _buildSexOption(String sex, IconData icon, bool isSelected) {
     return GestureDetector(
       onTap: () {
-        setState(() => selectedSex = sex);
+        setState(() {
+          selectedSex = sex;
+          UserRegistrationData.sex = sex;
+        });
       },
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -296,7 +306,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
   void _showWeightPicker(BuildContext context) {
     String tempWeight = '';
-    
+
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -329,6 +339,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   if (tempWeight.isNotEmpty) {
                     setState(() {
                       weight = '$tempWeight ${isMetric ? 'KG' : 'LBS'}';
+                      UserRegistrationData.weight = double.parse(tempWeight);
                     });
                     Navigator.pop(context);
                   }
@@ -429,7 +440,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
   void _showHeightPicker(BuildContext context) {
     String tempHeight = '';
-    
+
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -462,6 +473,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   if (tempHeight.isNotEmpty) {
                     setState(() {
                       height = '$tempHeight ${isMetric ? 'CM' : 'IN'}';
+                      UserRegistrationData.height = double.parse(tempHeight);
                     });
                     Navigator.pop(context);
                   }
@@ -484,7 +496,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
   void _showAgePicker(BuildContext context) {
     String tempAge = '';
-    
+
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -517,6 +529,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   if (tempAge.isNotEmpty) {
                     setState(() {
                       age = tempAge;
+                      UserRegistrationData.age = int.parse(tempAge);
                     });
                     Navigator.pop(context);
                   }
@@ -536,5 +549,4 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       ),
     );
   }
-
-  }
+}

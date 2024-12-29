@@ -1,13 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:rpstrengh/src/screens/exercise_detail_screen.dart';
+import 'package:rpstrengh/src/services/exercise_service.dart';
+import 'package:rpstrengh/src/models/exercise.dart';
 
-class WorkoutScreen extends StatelessWidget {
+class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
 
   @override
+  State<WorkoutScreen> createState() => _WorkoutScreenState();
+}
+
+class _WorkoutScreenState extends State<WorkoutScreen>
+    with AutomaticKeepAliveClientMixin {
+  final ExerciseService _exerciseService = ExerciseService();
+  List<Exercise> _exercises = [];
+  bool _isLoading = false;
+  bool _hasLoadedData = false;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_hasLoadedData) {
+      _loadExercises();
+      _hasLoadedData = true;
+    }
+  }
+
+  Future<void> _loadExercises() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final exercises = await _exerciseService.getAllExercises();
+      setState(() {
+        _exercises = exercises;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load exercises: ${e.toString()}')),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
-      backgroundColor: Colors.white, // Changed to white background
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -20,7 +72,8 @@ class WorkoutScreen extends StatelessWidget {
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: 'Search exercises',
-                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                        prefixIcon:
+                            const Icon(Icons.search, color: Colors.grey),
                         filled: true,
                         fillColor: Colors.grey[200],
                         border: OutlineInputBorder(
@@ -89,30 +142,25 @@ class WorkoutScreen extends StatelessWidget {
 
             // Exercise List
             Expanded(
-              child: ListView(
-                children: [
-                  _buildExerciseItem(
-                    'Push-up',
-                    'Chest',
-                    'assets/images/pushup.jpg',
-                    4,
-                    context,
-                  ),
-                  _buildExerciseItem(
-                    'Diamond Push-up',
-                    'Triceps',
-                    'assets/images/diamond_pushup.png',
-                    4,
-                    context,
-                  ),
-                  _buildExerciseItem(
-                    'Pull-up',
-                    'Lats',
-                    'assets/images/pullup.png',
-                    4,
-                    context,
-                  ),
-                ],
+              child: RefreshIndicator(
+                onRefresh: _loadExercises,
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _exercises.isEmpty
+                        ? const Center(child: Text('No exercises found'))
+                        : ListView.builder(
+                            itemCount: _exercises.length,
+                            itemBuilder: (context, index) {
+                              final exercise = _exercises[index];
+                              return _buildExerciseItem(
+                                exercise.name,
+                                'Target Muscle',
+                                'assets/images/rp_logo.png',
+                                4,
+                                context,
+                              );
+                            },
+                          ),
               ),
             ),
           ],
@@ -139,7 +187,8 @@ class WorkoutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildExerciseItem(String title, String targetMuscle, String imagePath, int difficulty, BuildContext context) {
+  Widget _buildExerciseItem(String title, String targetMuscle, String imagePath,
+      int difficulty, BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -201,7 +250,9 @@ class WorkoutScreen extends StatelessWidget {
                           child: Icon(
                             Icons.circle,
                             size: 8,
-                            color: index < difficulty ? Colors.red : Colors.grey[300],
+                            color: index < difficulty
+                                ? Colors.red
+                                : Colors.grey[300],
                           ),
                         );
                       }),

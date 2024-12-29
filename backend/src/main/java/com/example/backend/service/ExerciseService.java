@@ -50,4 +50,6 @@ public class ExerciseService {
         exerciseRepository.deleteById(id);
     }
 
+    public List<Exercise> getAllExercises() { return exerciseRepository.findAll(); }
+
 }

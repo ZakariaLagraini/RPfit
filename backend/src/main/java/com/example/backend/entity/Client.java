@@ -20,7 +20,7 @@ public class Client {
     private double Age;
     @Enumerated(EnumType.STRING)
     private Goal goal;
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client")
     private List<WorkoutPlan> workoutPlans;
     private String email;
     private String password;

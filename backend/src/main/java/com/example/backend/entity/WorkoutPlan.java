@@ -1,5 +1,7 @@
 package com.example.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;  // Add this import
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,9 +20,11 @@ public class WorkoutPlan {
     private String name;
     private int durationInWeeks;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "workoutPlan", cascade = CascadeType.ALL)
     private List<Exercise> exercises;
 
+    @JsonIgnore  // Add this annotation
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;

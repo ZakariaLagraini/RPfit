@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
-import 'screens/welcome_page.dart';
-import 'services/secure_storage.dart';
+import 'src/screens/home_screen.dart';
+import 'src/screens/welcome_page.dart';
+import 'src/services/secure_storage.dart';
 
-void main() async {
-  // Ensure Flutter bindings are initialized
-  WidgetsFlutterBinding.ensureInitialized();
-  
+void main() {
   runApp(const MainApp());
 }
 

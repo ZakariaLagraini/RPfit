@@ -48,4 +48,8 @@ public class ClientService {
     public List<Client> getClientsByGoal(Goal goal) {
         return clientRepository.findByGoal(goal);
     }
+
+    public Client getClientByEmail(String email) {
+        return clientRepository.findByEmail(email);
+    }
 }

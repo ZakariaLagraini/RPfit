@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class StatsPage extends StatelessWidget {
+class StatsScreen extends StatelessWidget {
   static const Color primaryColor = Color(0xFFE53935);
   static const Color backgroundColor = Colors.white;
   static const Color cardColor = Colors.white;
   static const Color textColor = Colors.black;
 
-  const StatsPage({super.key});
+  const StatsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,13 @@ class StatsPage extends StatelessWidget {
                           sideTitles: SideTitles(
                             showTitles: true,
                             getTitlesWidget: (value, meta) {
-                              const titles = ['Legs', 'Arms', 'Back', 'Abs', 'Chest'];
+                              const titles = [
+                                'Legs',
+                                'Arms',
+                                'Back',
+                                'Abs',
+                                'Chest'
+                              ];
                               return Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
@@ -156,7 +162,12 @@ class StatsPage extends StatelessWidget {
                               sideTitles: SideTitles(
                                 showTitles: true,
                                 getTitlesWidget: (value, meta) {
-                                  const dates = ['Oct 27', 'Oct 28', 'Oct 29', 'Oct 30'];
+                                  const dates = [
+                                    'Oct 27',
+                                    'Oct 28',
+                                    'Oct 29',
+                                    'Oct 30'
+                                  ];
                                   return Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(
@@ -286,4 +297,4 @@ class StatsPage extends StatelessWidget {
       ],
     );
   }
-} 
+}

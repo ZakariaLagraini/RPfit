@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rpstrengh/src/screens/user_details_screen.dart';
+import 'package:rpstrengh/src/models/user_registration_data.dart';
 
 class UserWelcomeScreen extends StatefulWidget {
   const UserWelcomeScreen({super.key});
@@ -39,15 +40,15 @@ class _UserWelcomeScreenState extends State<UserWelcomeScreen> {
             ),
             const SizedBox(height: 20),
             const Text(
-              'Hi Zakaria Lagraini! Welcome.',
+              'Hi! Welcome.',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const Text(
-              'You are logged in with\nzakarialaganimes@gmail.com',
-              style: TextStyle(
+            Text(
+              'You are logged in with\n${UserRegistrationData.email ?? ""}',
+              style: const TextStyle(
                 color: Colors.grey,
               ),
             ),
@@ -81,16 +82,16 @@ class _UserWelcomeScreenState extends State<UserWelcomeScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _isDisclaimerAccepted 
-                  ? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const UserDetailsScreen(),
-                        ),
-                      );
-                    } 
-                  : null,
+                onPressed: _isDisclaimerAccepted
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const UserDetailsScreen(),
+                          ),
+                        );
+                      }
+                    : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 244, 67, 54),
                   padding: const EdgeInsets.all(15),
