@@ -1,5 +1,7 @@
 package com.example.backend.entity;
 
+import com.example.backend.Enumeration.ActivityLevel;
+import com.example.backend.Enumeration.Gender;
 import com.example.backend.Enumeration.Goal;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,7 +22,11 @@ public class Client {
     private double Age;
     @Enumerated(EnumType.STRING)
     private Goal goal;
-    @OneToMany(mappedBy = "client")
+    @Enumerated(EnumType.STRING)
+    private Gender gender;  // Added gender
+    @Enumerated(EnumType.STRING)
+    private ActivityLevel activityLevel;  // Added activity level
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<WorkoutPlan> workoutPlans;
     private String email;
     private String password;
