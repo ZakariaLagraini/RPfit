@@ -1,0 +1,202 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-red-50/10 to-gray-100 py-12">
+  <div class="container mx-auto px-4 max-w-7xl">
+    <!-- Add Back Button -->
+    <button (click)="goBack()" 
+            class="absolute top-6 left-6 text-gray-600 hover:text-red-500 font-semibold group 
+                   flex items-center space-x-2 transition-all duration-300">
+      <i class="fas fa-arrow-left transform group-hover:-translate-x-1 transition-transform"></i>
+      <span>Back</span>
+    </button>
+
+    <!-- Enhanced Header Section with Animation -->
+    <div class="text-center mb-16 space-y-4 animate-fadeIn">
+      <h1 class="text-5xl font-extrabold text-gray-800 mb-3">
+        Weight Loss <span class="text-red-500">Program</span>
+      </h1>
+      <p class="text-gray-600 text-xl max-w-2xl mx-auto">
+        Your personalized journey to a healthier you. Track, progress, and achieve your goals.
+      </p>
+    </div>
+    
+    <!-- Enhanced Categories View with Better Cards -->
+    <div *ngIf="!selectedCategory" 
+         class="grid grid-cols-1 md:grid-cols-3 gap-8 animate-fadeIn">
+      <div *ngFor="let category of exerciseCategories" 
+           (click)="selectCategory(category)"
+           class="group bg-white rounded-2xl shadow-xl overflow-hidden cursor-pointer transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl border border-gray-100/50">
+        <div class="relative overflow-hidden p-8">
+          <!-- Animated Background Effect -->
+          <div class="absolute inset-0 bg-gradient-to-br from-red-500/5 to-red-500/10 
+                      group-hover:from-red-500/10 group-hover:to-red-500/20 transition-all duration-300"></div>
+          
+          <!-- Icon and Content -->
+          <div class="relative z-10 text-center">
+            <div class="bg-gradient-to-br from-red-50 to-white w-24 h-24 rounded-full 
+                        flex items-center justify-center mx-auto mb-6 
+                        group-hover:scale-110 transition-transform duration-300 
+                        shadow-lg">
+              <i [class]="category.icon + ' text-5xl text-red-500 transform group-hover:rotate-12 transition-transform'"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 group-hover:text-red-500 transition-colors">
+              {{category.name}}
+            </h2>
+            <p class="text-gray-600 leading-relaxed">{{category.description}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Exercise View -->
+    <div *ngIf="selectedCategory" class="space-y-8 animate-fadeIn">
+      <!-- Enhanced Back Button -->
+      <button (click)="backToCategories()" 
+              class="flex items-center text-red-500 hover:text-red-600 font-semibold group 
+                     bg-white px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all">
+        <i class="fas fa-arrow-left mr-3 transform group-hover:-translate-x-1 transition-transform"></i> 
+        Back to Categories
+      </button>
+
+      <!-- Exercise Cards with Enhanced Design -->
+      <div *ngFor="let exercise of selectedCategory.exercises" 
+           class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 border border-gray-100/50">
+        
+        <!-- Exercise Preview (Always Visible) -->
+        <div class="p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+             (click)="toggleExercise(exercise)">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center">
+                <i class="fas fa-dumbbell text-red-500"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-gray-800">{{exercise.name}}</h3>
+                <p class="text-gray-600 text-sm">{{exercise.description}}</p>
+              </div>
+            </div>
+            <i class="fas fa-chevron-down text-gray-400 chevron-icon"
+               [class.expanded]="exercise.isExpanded"></i>
+          </div>
+        </div>
+
+        <!-- Expandable Content -->
+        <div class="exercise-content" [class.expanded]="exercise.isExpanded">
+          <div>
+            <!-- Your existing exercise content here -->
+            <div class="md:flex border-t border-gray-100">
+              <!-- Left Section: Exercise Demo -->
+              <div class="md:w-1/2 p-8">
+                <div class="relative rounded-xl overflow-hidden mb-6 bg-gray-100">
+                  <img [src]="exercise.gifUrl" [alt]="exercise.name" class="w-full h-64 object-cover">
+                  <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                    <div class="flex justify-between text-white">
+                      <div class="text-center">
+                        <span class="block text-sm">Sets</span>
+                        <span class="block font-bold">{{exercise.sets}}</span>
+                      </div>
+                      <div class="text-center">
+                        <span class="block text-sm">Reps</span>
+                        <span class="block font-bold">{{exercise.reps}}</span>
+                      </div>
+                      <div class="text-center">
+                        <span class="block text-sm">Rest</span>
+                        <span class="block font-bold">{{exercise.rest}}s</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Instructions -->
+                <div class="space-y-4">
+                  <h4 class="font-bold text-lg text-gray-700">Instructions:</h4>
+                  <ol class="space-y-3">
+                    <li *ngFor="let instruction of exercise.instructions; let i = index" 
+                        class="flex items-start">
+                      <span class="flex-shrink-0 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-3">
+                        {{i + 1}}
+                      </span>
+                      <span class="text-gray-600">{{instruction}}</span>
+                    </li>
+                  </ol>
+                </div>
+              </div>
+
+              <!-- Right Section: Progress Tracking -->
+              <div class="md:w-1/2 bg-gradient-to-br from-gray-50 to-white p-8 border-l border-gray-100">
+                <form (submit)="logExercise($event, exercise)" class="space-y-6">
+                  <!-- Date Input -->
+                  <div>
+                    <label class="font-medium text-gray-700 block mb-2">Date</label>
+                    <input type="date" [(ngModel)]="newLog.date" name="date"
+                           class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                  </div>
+
+                  <!-- Sets and Reps Section -->
+                  <div>
+                    <div class="flex items-center justify-between mb-2">
+                      <label class="font-medium text-gray-700">Sets & Reps</label>
+                      <div class="space-x-2">
+                        <button type="button" (click)="addSet()"
+                                class="text-red-500 hover:text-red-600 text-sm font-medium">
+                          + Add Set
+                        </button>
+                        <button type="button" (click)="removeSet()"
+                                class="text-gray-500 hover:text-gray-600 text-sm font-medium">
+                          - Remove Set
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Dynamic Sets Input -->
+                    <div class="space-y-3">
+                      <div *ngFor="let set of getArray(newLog.setsCompleted); let i = index"
+                           class="flex items-center space-x-3">
+                        <span class="text-gray-500 font-medium w-16">Set {{i + 1}}</span>
+                        <input type="number" [(ngModel)]="newLog.repsPerSet[i]" 
+                               [name]="'set' + i"
+                               class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                               placeholder="Reps">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Notes Section -->
+                  <div>
+                    <label class="font-medium text-gray-700 block mb-2">Notes</label>
+                    <textarea [(ngModel)]="newLog.notes" name="notes" rows="3"
+                              class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                              placeholder="How did it feel? Any improvements?"></textarea>
+                  </div>
+
+                  <!-- Submit Button -->
+                  <button type="submit" 
+                          class="w-full bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600 
+                                 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+                    Log Progress
+                  </button>
+                </form>
+
+                <!-- Previous Logs -->
+                <div class="mt-8">
+                  <h4 class="font-bold text-lg text-gray-700 mb-4">Previous Logs</h4>
+                  <div class="space-y-4 max-h-64 overflow-y-auto">
+                    <div *ngFor="let log of exercise.logs" 
+                         class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 log-entry">
+                      <div class="flex justify-between items-start mb-2">
+                        <span class="font-medium text-gray-700">{{log.date}}</span>
+                        <span class="text-sm text-gray-500">{{log.setsCompleted}} sets</span>
+                      </div>
+                      <div class="text-sm text-gray-600 mb-2">
+                        Reps: {{log.repsPerSet.join(' | ')}}
+                      </div>
+                      <p class="text-sm text-gray-500 italic" *ngIf="log.notes">{{log.notes}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

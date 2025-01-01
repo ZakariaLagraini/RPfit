@@ -1,11 +1,13 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-profile-creation',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './profile-creation.component.html',
   styleUrls: ['./profile-creation.component.css']
 })
@@ -25,6 +27,8 @@ export class ProfileCreationComponent implements OnDestroy {
     experienceLevel: ''
   };
 
+  constructor(private router: Router, private location: Location) {}
+
   onFileChange(event: any): void {
     const file = event.target.files?.[0];
     if (file) {
@@ -40,7 +44,30 @@ export class ProfileCreationComponent implements OnDestroy {
 
   saveProfile(): void {
     console.log('Profile data:', this.formData);
-    // Add your save logic here
+    
+    // Prevent default form submission
+    // Prevent.preventDefault();
+    
+    switch (this.formData.fitnessGoal) {
+      case 'weightLoss':
+        this.router.navigate(['/exercises/weight-loss']);
+        break;
+      case 'muscleGain':
+        this.router.navigate(['/exercises/muscle-gain']);
+        break;
+      case 'endurance':
+        this.router.navigate(['/exercises/maintenance']);
+        break;
+      case 'flexibility':
+        this.router.navigate(['/exercises/flexibility']);
+        break;
+      default:
+        this.router.navigate(['/exercises']);
+    }
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   ngOnDestroy() {

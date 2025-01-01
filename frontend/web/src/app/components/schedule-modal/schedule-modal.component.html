@@ -1,0 +1,100 @@
+<div *ngIf="isOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-2xl w-full max-w-2xl p-6 m-4 shadow-2xl animate-fadeIn">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">Schedule Workout Session</h2>
+      <button (click)="close()" class="text-gray-500 hover:text-gray-700">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+
+    <form (submit)="handleSubmit($event)" class="space-y-6">
+      <!-- Date and Time -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+          <input type="date" [(ngModel)]="session.date" name="date" required
+                 class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Time</label>
+          <input type="time" [(ngModel)]="session.time" name="time" required
+                 class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200">
+        </div>
+      </div>
+
+      <!-- Workout Type -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Workout Type</label>
+        <select [(ngModel)]="session.workoutType" name="workoutType" required
+                class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200">
+          <option value="strength">Strength Training</option>
+          <option value="cardio">Cardio</option>
+          <option value="hiit">HIIT</option>
+          <option value="yoga">Yoga</option>
+          <option value="custom">Custom Workout</option>
+        </select>
+      </div>
+
+      <!-- Duration and Intensity -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Duration (minutes)</label>
+          <input type="number" [(ngModel)]="session.duration" name="duration" required min="15" max="180"
+                 class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Intensity</label>
+          <select [(ngModel)]="session.intensity" name="intensity" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Location and Trainer -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+          <input type="text" [(ngModel)]="session.location" name="location"
+                 class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                 placeholder="Gym name or location">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Trainer (optional)</label>
+          <input type="text" [(ngModel)]="session.trainer" name="trainer"
+                 class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                 placeholder="Trainer name">
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+        <textarea [(ngModel)]="session.notes" name="notes" rows="3"
+                  class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                  placeholder="Any additional notes..."></textarea>
+      </div>
+
+      <!-- Reminder Toggle -->
+      <div class="flex items-center">
+        <input type="checkbox" [(ngModel)]="session.reminder" name="reminder" id="reminder"
+               class="rounded border-gray-300 text-red-500 focus:ring-red-500">
+        <label for="reminder" class="ml-2 text-sm text-gray-700">Set reminder for this session</label>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex justify-end gap-4">
+        <button type="button" (click)="close()" 
+                class="px-6 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">
+          Cancel
+        </button>
+        <button type="submit" 
+                class="px-6 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600">
+          Schedule Session
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
