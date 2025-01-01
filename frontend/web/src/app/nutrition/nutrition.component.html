@@ -1,0 +1,96 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-red-50/10 to-gray-100 pt-24 pb-12">
+  <div class="container mx-auto px-4 max-w-6xl">
+    <!-- Back Button -->
+    <button (click)="goBack()" 
+            class="absolute top-6 left-6 text-gray-600 hover:text-red-500 font-semibold group 
+                   flex items-center space-x-2 transition-all duration-300">
+      <i class="fas fa-arrow-left transform group-hover:-translate-x-1 transition-transform"></i>
+      <span>Back</span>
+    </button>
+
+    <!-- Enhanced Header Section -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 transform hover:scale-[1.01] transition-all duration-300">
+      <div class="relative h-48 bg-gradient-to-r from-red-500 to-red-600 overflow-hidden">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <!-- Add decorative elements -->
+        <div class="absolute -right-16 -top-16 w-64 h-64 bg-red-400/20 rounded-full blur-3xl"></div>
+        <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-red-600/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-8 left-8 z-10">
+          <h1 class="text-4xl font-bold text-white mb-2 animate-fadeIn">Nutrition Plan</h1>
+          <p class="text-red-100 animate-fadeIn delay-100">Your personalized meal plan for optimal fitness results</p>
+        </div>
+      </div>
+      
+      <!-- Enhanced Nutrition Summary -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 p-8">
+        <div class="bg-gray-50 rounded-xl p-6 text-center hover:bg-white hover:shadow-lg transition-all duration-300">
+          <h3 class="text-gray-500 text-sm font-semibold mb-2">Total Calories</h3>
+          <p class="text-3xl font-bold text-gray-800">{{totalCalories}}</p>
+          <p class="text-sm text-gray-500">kcal</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-6 text-center hover:bg-white hover:shadow-lg transition-all duration-300">
+          <h3 class="text-gray-500 text-sm font-semibold mb-2">Protein</h3>
+          <p class="text-3xl font-bold text-gray-800">{{totalProtein}}g</p>
+          <p class="text-sm text-gray-500">{{(totalProtein * 4 / totalCalories * 100).toFixed(0)}}% of total</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-6 text-center hover:bg-white hover:shadow-lg transition-all duration-300">
+          <h3 class="text-gray-500 text-sm font-semibold mb-2">Carbs</h3>
+          <p class="text-3xl font-bold text-gray-800">{{totalCarbs}}g</p>
+          <p class="text-sm text-gray-500">{{(totalCarbs * 4 / totalCalories * 100).toFixed(0)}}% of total</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-6 text-center hover:bg-white hover:shadow-lg transition-all duration-300">
+          <h3 class="text-gray-500 text-sm font-semibold mb-2">Fats</h3>
+          <p class="text-3xl font-bold text-gray-800">{{totalFats}}g</p>
+          <p class="text-sm text-gray-500">{{(totalFats * 9 / totalCalories * 100).toFixed(0)}}% of total</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Meal Plans -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div *ngFor="let meal of dailyNutrition" 
+           class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transform hover:scale-[1.02] 
+                  transition-all duration-300">
+        <!-- Add meal image -->
+        <div class="relative h-48 overflow-hidden">
+          <img [src]="meal.image" 
+               [alt]="meal.mealType"
+               class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 text-white">
+            <h2 class="text-2xl font-bold">{{meal.mealType}}</h2>
+            <span class="text-sm opacity-90">{{meal.time}}</span>
+          </div>
+        </div>
+
+        <div class="p-6 border-b border-gray-100">
+          <div class="flex space-x-4 mb-4">
+            <div class="bg-red-50 rounded-lg px-3 py-1 text-red-700 text-sm">
+              {{meal.calories}} kcal
+            </div>
+            <div class="bg-blue-50 rounded-lg px-3 py-1 text-blue-700 text-sm">
+              {{meal.protein}}g protein
+            </div>
+            <div class="bg-green-50 rounded-lg px-3 py-1 text-green-700 text-sm">
+              {{meal.carbs}}g carbs
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-6">
+          <div *ngFor="let food of meal.foods" 
+               class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors duration-200">
+            <div class="flex items-center space-x-3">
+              <i class="fas {{food.icon}} text-red-500 text-lg w-6"></i>
+              <div>
+                <p class="font-semibold text-gray-800">{{food.name}}</p>
+                <p class="text-sm text-gray-500">{{food.portion}}</p>
+              </div>
+            </div>
+            <span class="text-gray-600 bg-gray-100 px-2 py-1 rounded">{{food.calories}} kcal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

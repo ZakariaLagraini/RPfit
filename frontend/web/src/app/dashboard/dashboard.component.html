@@ -1,0 +1,188 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-red-50/10 to-gray-100 pt-24 pb-12">
+  <!-- Add Back Button -->
+  <button (click)="goBack()" 
+          class="absolute top-6 left-6 text-gray-600 hover:text-red-500 font-semibold group 
+                 flex items-center space-x-2 transition-all duration-300">
+    <i class="fas fa-arrow-left transform group-hover:-translate-x-1 transition-transform"></i>
+    <span>Back</span>
+  </button>
+
+  <div class="container mx-auto px-4 max-w-7xl">
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+      <div class="relative h-56 bg-gradient-to-r from-red-500 to-red-600">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="absolute -right-16 -top-16 w-64 h-64 bg-red-400/20 rounded-full blur-3xl"></div>
+        <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-red-600/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-8 left-8 z-10">
+          <h1 class="text-4xl font-bold text-white mb-2">Welcome back, Athlete!</h1>
+          <p class="text-red-100">Your fitness journey is 45% complete</p>
+          <div class="w-64 h-2 bg-red-200/30 rounded-full mt-4">
+            <div class="w-[45%] h-full bg-white rounded-full"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <button class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3">
+        <div class="bg-red-100 p-3 rounded-lg">
+          <i class="fas fa-plus text-red-500"></i>
+        </div>
+        <span class="font-semibold text-gray-700">Start Workout</span>
+      </button>
+      <button (click)="openScheduleModal()" 
+              class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3">
+        <div class="bg-blue-100 p-3 rounded-lg">
+          <i class="fas fa-calendar-plus text-blue-500"></i>
+        </div>
+        <span class="font-semibold text-gray-700">Schedule Session</span>
+      </button>
+      <button class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3">
+        <div class="bg-green-100 p-3 rounded-lg">
+          <i class="fas fa-apple-alt text-green-500"></i>
+        </div>
+        <span class="font-semibold text-gray-700">Log Nutrition</span>
+      </button>
+      <button class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3">
+        <div class="bg-purple-100 p-3 rounded-lg">
+          <i class="fas fa-chart-line text-purple-500"></i>
+        </div>
+        <span class="font-semibold text-gray-700">View Progress</span>
+      </button>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-xl p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <div class="bg-red-50 p-3 rounded-lg">
+            <i class="fas fa-dumbbell text-red-500 text-xl"></i>
+          </div>
+          <span class="text-sm text-green-500">+12% ↑</span>
+        </div>
+        <h3 class="text-gray-500 text-sm mb-2">Workouts Completed</h3>
+        <div class="flex items-end gap-2">
+          <p class="text-3xl font-bold text-gray-800">24</p>
+          <p class="text-sm text-gray-500 mb-1">this month</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <div class="bg-orange-50 p-3 rounded-lg">
+            <i class="fas fa-fire text-orange-500 text-xl"></i>
+          </div>
+          <span class="text-sm text-green-500">+8% ↑</span>
+        </div>
+        <h3 class="text-gray-500 text-sm mb-2">Calories Burned</h3>
+        <div class="flex items-end gap-2">
+          <p class="text-3xl font-bold text-gray-800">12,450</p>
+          <p class="text-sm text-gray-500 mb-1">kcal</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <div class="bg-blue-50 p-3 rounded-lg">
+            <i class="fas fa-clock text-blue-500 text-xl"></i>
+          </div>
+          <span class="text-sm text-green-500">+15% ↑</span>
+        </div>
+        <h3 class="text-gray-500 text-sm mb-2">Active Time</h3>
+        <div class="flex items-end gap-2">
+          <p class="text-3xl font-bold text-gray-800">32</p>
+          <p class="text-sm text-gray-500 mb-1">hours</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <div class="bg-purple-50 p-3 rounded-lg">
+            <i class="fas fa-medal text-purple-500 text-xl"></i>
+          </div>
+          <span class="text-sm text-green-500">+5% ↑</span>
+        </div>
+        <h3 class="text-gray-500 text-sm mb-2">Strength Score</h3>
+        <div class="flex items-end gap-2">
+          <p class="text-3xl font-bold text-gray-800">785</p>
+          <p class="text-sm text-gray-500 mb-1">points</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <div class="bg-white p-6 rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-800">Workout Progress</h3>
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-1 text-sm rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">Week</button>
+            <button class="px-3 py-1 text-sm rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">Month</button>
+          </div>
+        </div>
+        <div class="relative">
+          <canvas id="workoutChart" class="w-full h-[300px]"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-800">Body Metrics</h3>
+          <select class="px-3 py-1 text-sm rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 focus:outline-none">
+            <option value="month">Last Month</option>
+            <option value="3months">Last 3 Months</option>
+            <option value="6months">Last 6 Months</option>
+          </select>
+        </div>
+        <div class="relative">
+          <canvas id="metricsChart" class="w-full h-[300px]"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity & Goals -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-xl">
+        <h3 class="text-lg font-semibold text-gray-800 mb-6">Recent Activity</h3>
+        <div class="space-y-4">
+          <div *ngFor="let activity of recentActivities" 
+               class="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+            <div [class]="'p-3 rounded-lg ' + activity.bgColor">
+              <i [class]="activity.icon + ' ' + activity.iconColor"></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-gray-800">{{activity.title}}</h4>
+              <p class="text-sm text-gray-500">{{activity.description}}</p>
+            </div>
+            <span class="text-sm text-gray-400">{{activity.time}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl shadow-xl">
+        <h3 class="text-lg font-semibold text-gray-800 mb-6">Weekly Goals</h3>
+        <div class="space-y-4">
+          <div *ngFor="let goal of weeklyGoals" class="space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">{{goal.title}}</span>
+              <span class="text-gray-800 font-semibold">{{goal.progress}}%</span>
+            </div>
+            <div class="h-2 bg-gray-100 rounded-full">
+              <div [style.width.%]="goal.progress" 
+                   [class]="'h-full rounded-full ' + goal.progressColor">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-schedule-modal
+  [isOpen]="isScheduleModalOpen"
+  (closeModal)="isScheduleModalOpen = false"
+  (scheduleSession)="handleScheduleSession($event)">
+</app-schedule-modal>

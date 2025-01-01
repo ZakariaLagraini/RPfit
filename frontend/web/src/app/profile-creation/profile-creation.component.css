@@ -1,0 +1,15 @@
+.fitness-goal-card input[type="radio"]:checked + label {
+  border-color: rgb(239, 68, 68); /* red-500 */
+  background-color: rgb(254, 242, 242); /* red-50 */
+  box-shadow: 0 0 0 2px rgb(239, 68, 68); /* red-500 */
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+.fitness-goal-card label {
+  transition: all 0.3s ease;
+}
+
+.fitness-goal-card:hover label {
+  transform: translateY(-2px);
+}
