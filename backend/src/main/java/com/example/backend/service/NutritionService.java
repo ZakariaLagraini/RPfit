@@ -6,15 +6,25 @@ import com.example.backend.repository.ClientRepository;
 import com.example.backend.Enumeration.Goal;
 import com.example.backend.Enumeration.Gender;
 import com.example.backend.Enumeration.ActivityLevel;
+import com.example.backend.repository.NutritionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class NutritionService {
 
     private final ClientRepository clientRepository;
+    @Autowired
+    private NutritionRepository nutritionRepository;
 
     public NutritionService(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
+    }
+
+    public List<Nutrition> getNutritionsByClientId(Long clientId) {
+        return nutritionRepository.findByClientId(clientId);
     }
 
     public Nutrition calculateNutrition(Long clientId) {

@@ -32,13 +32,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
                     corsConfiguration.setAllowCredentials(true);
-                    corsConfiguration.addAllowedOrigin("http://localhost:49324"); // Allow your Flutter app's origin
+                    corsConfiguration.addAllowedOrigin("http://localhost:60634"); // Allow your Flutter app's origin
                     corsConfiguration.addAllowedHeader("*");
                     corsConfiguration.addAllowedMethod("*");
                     return corsConfiguration;
                 }))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/login", "/api/register","/api/progress/**").permitAll()
+                        .requestMatchers("/api/login", "/api/nutrition/**", "/api/register","/api/progress/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

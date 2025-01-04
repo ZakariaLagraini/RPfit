@@ -13,6 +13,7 @@ dependencies:
   flutter_native_splash: ^2.4.0
   http: ^1.1.0
   awesome_dialog: ^3.2.1
+  intl: ^0.20.1
 
   flutter_svg: any
   shared_preferences: ^2.3.3

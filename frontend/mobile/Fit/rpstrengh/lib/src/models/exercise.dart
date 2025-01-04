@@ -5,7 +5,7 @@ class Exercise {
   final int reps;
   final double weight;
   final int restTime;
-  final int? workoutPlanId; // Made optional since it might be null
+  final int? workoutPlanId;
 
   Exercise({
     required this.id,
@@ -27,5 +27,17 @@ class Exercise {
       restTime: json['restTime']?.toInt() ?? 0,
       workoutPlanId: json['workoutPlan']?['id']?.toInt(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'sets': sets,
+      'reps': reps,
+      'weight': weight,
+      'restTime': restTime,
+      if (workoutPlanId != null) 'workoutPlan': {'id': workoutPlanId},
+    };
   }
 }

@@ -2,16 +2,14 @@ package com.example.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
+@ToString(exclude = "workoutPlans")
 public class Exercise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

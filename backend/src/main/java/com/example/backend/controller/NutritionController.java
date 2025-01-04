@@ -5,6 +5,8 @@ import com.example.backend.service.NutritionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class NutritionController {
@@ -16,10 +18,10 @@ public class NutritionController {
     }
 
     @GetMapping("/nutrition/{clientId}")
-    public ResponseEntity<Nutrition> getNutrition(@PathVariable Long clientId) {
+    public ResponseEntity<List<Nutrition>> getNutrition(@PathVariable Long clientId) {
         try {
-            Nutrition nutrition = nutritionService.calculateNutrition(clientId);
-            return ResponseEntity.ok(nutrition);
+            List<Nutrition> nutritions = nutritionService.getNutritionsByClientId(clientId);
+            return ResponseEntity.ok(nutritions);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }

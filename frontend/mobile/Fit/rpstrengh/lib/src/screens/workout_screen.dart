@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:rpstrengh/src/screens/add_exercise_screen.dart';
 import 'package:rpstrengh/src/screens/exercise_detail_screen.dart';
 import 'package:rpstrengh/src/services/exercise_service.dart';
 import 'package:rpstrengh/src/models/exercise.dart';
+import 'package:rpstrengh/src/services/progress_service.dart';
+import 'package:rpstrengh/src/models/progress.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
@@ -14,8 +17,10 @@ class _WorkoutScreenState extends State<WorkoutScreen>
     with AutomaticKeepAliveClientMixin {
   final ExerciseService _exerciseService = ExerciseService();
   List<Exercise> _exercises = [];
+  List<Exercise> _filteredExercises = [];
   bool _isLoading = false;
   bool _hasLoadedData = false;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   bool get wantKeepAlive => true;
@@ -40,6 +45,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
       final exercises = await _exerciseService.getAllExercises();
       setState(() {
         _exercises = exercises;
+        _filteredExercises = exercises; // Initialize filtered list
         _isLoading = false;
       });
     } catch (e) {
@@ -51,6 +57,21 @@ class _WorkoutScreenState extends State<WorkoutScreen>
           SnackBar(content: Text('Failed to load exercises: ${e.toString()}')),
         );
       }
+    }
+  }
+
+  void _filterExercises(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        _filteredExercises = _exercises; // Reset to all exercises
+      });
+    } else {
+      setState(() {
+        _filteredExercises = _exercises
+            .where((exercise) =>
+                exercise.name.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      });
     }
   }
 
@@ -70,6 +91,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: _searchController,
                       decoration: InputDecoration(
                         hintText: 'Search exercises',
                         prefixIcon:
@@ -81,6 +103,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                           borderSide: BorderSide.none,
                         ),
                       ),
+                      onChanged: _filterExercises, // Call filter on text change
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -92,20 +115,6 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                     icon: const Icon(Icons.star_border),
                     onPressed: () {},
                   ),
-                ],
-              ),
-            ),
-
-            // Filter Buttons
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  _buildFilterButton('Type', Icons.accessibility_new),
-                  const SizedBox(width: 8),
-                  _buildFilterButton('Equipment', Icons.fitness_center),
-                  const SizedBox(width: 8),
-                  _buildFilterButton('Muscles', Icons.sports_gymnastics),
                 ],
               ),
             ),
@@ -130,7 +139,14 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                     ],
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddExerciseScreen(),
+                        ),
+                      );
+                    },
                     child: const Text(
                       '+Add Custom Exercise',
                       style: TextStyle(color: Colors.red),
@@ -146,12 +162,12 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                 onRefresh: _loadExercises,
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : _exercises.isEmpty
+                    : _filteredExercises.isEmpty
                         ? const Center(child: Text('No exercises found'))
                         : ListView.builder(
-                            itemCount: _exercises.length,
+                            itemCount: _filteredExercises.length,
                             itemBuilder: (context, index) {
-                              final exercise = _exercises[index];
+                              final exercise = _filteredExercises[index];
                               return _buildExerciseItem(
                                 exercise.name,
                                 'Target Muscle',
@@ -169,37 +185,169 @@ class _WorkoutScreenState extends State<WorkoutScreen>
     );
   }
 
-  Widget _buildFilterButton(String text, IconData icon) {
-    return Expanded(
-      child: ElevatedButton.icon(
-        onPressed: () {},
-        icon: Icon(icon),
-        label: Text(text),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.grey[200],
-          foregroundColor: Colors.black87,
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildExerciseItem(String title, String targetMuscle, String imagePath,
       int difficulty, BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ExerciseDetailScreen(
-              title: title,
-              imagePath: imagePath,
-            ),
-          ),
+      onTap: () async {
+        // Show dialog to input exercise details
+        final result = await showDialog<Map<String, dynamic>>(
+          context: context,
+          builder: (BuildContext context) {
+            int sets = 1;
+            int reps = 1;
+            double weight = 0.0;
+            String notes = '';
+
+            return AlertDialog(
+              title: Text('Record $title'),
+              content: SingleChildScrollView(
+                child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Sets input
+                        Row(
+                          children: [
+                            const Text('Sets: '),
+                            IconButton(
+                              icon: const Icon(Icons.remove),
+                              onPressed: () {
+                                if (sets > 1) {
+                                  setState(() => sets--);
+                                }
+                              },
+                            ),
+                            Text('$sets'),
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed: () => setState(() => sets++),
+                            ),
+                          ],
+                        ),
+                        // Reps input
+                        Row(
+                          children: [
+                            const Text('Reps: '),
+                            IconButton(
+                              icon: const Icon(Icons.remove),
+                              onPressed: () {
+                                if (reps > 1) {
+                                  setState(() => reps--);
+                                }
+                              },
+                            ),
+                            Text('$reps'),
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed: () => setState(() => reps++),
+                            ),
+                          ],
+                        ),
+                        // Weight input
+                        TextField(
+                          decoration: const InputDecoration(
+                            labelText: 'Weight (kg)',
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            weight = double.tryParse(value) ?? 0.0;
+                          },
+                        ),
+                        // Notes input
+                        TextField(
+                          decoration: const InputDecoration(
+                            labelText: 'Notes (optional)',
+                          ),
+                          maxLines: 2,
+                          onChanged: (value) {
+                            notes = value;
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, {
+                      'sets': sets,
+                      'reps': reps,
+                      'weight': weight,
+                      'notes': notes,
+                    });
+                  },
+                  child: const Text('Save'),
+                ),
+              ],
+            );
+          },
         );
+
+        // If user confirmed, create progress
+        if (result != null) {
+          try {
+            final progressService = ProgressService();
+            final exercise = Exercise(
+              id: 1, // You need to get the actual exercise ID
+              name: title,
+              sets: result['sets'],
+              reps: result['reps'],
+              weight: result['weight'],
+              restTime: 60,
+            );
+
+            final progress = Progress(
+              id: 0, // ID will be assigned by the backend
+              exercise: exercise,
+              date: DateTime.now(),
+              repetitions: int.parse(result['reps'].toString()),
+              weight: double.parse(result['weight'].toString()),
+              sets: int.parse(result['sets'].toString()),
+              notes: result['notes'] ?? '',
+              // The client will be set on the backend using the JWT token
+            );
+
+            await progressService.createProgress(progress);
+
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Exercise recorded successfully!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to record exercise: $e'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          }
+        }
+
+        // Navigate to exercise detail screen
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ExerciseDetailScreen(
+                title: title,
+                imagePath: imagePath,
+              ),
+            ),
+          );
+        }
       },
       child: Container(
         padding: const EdgeInsets.all(16),
