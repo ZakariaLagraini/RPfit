@@ -37,7 +37,7 @@ export class WorkoutComponent {
   workouts: Workout[] = [
     {
       name: 'Bench Press',
-      imageUrl: 'assets/exercises/bench-press.gif',
+      imageUrl: 'assets/gif/bench-press.gif',
       difficulty: 'intermediate',
       description: 'Fundamental chest exercise for building upper body strength',
       duration: 10,
@@ -53,7 +53,7 @@ export class WorkoutComponent {
     },
     {
       name: 'Squats',
-      imageUrl: 'assets/exercises/squats.gif',
+      imageUrl: 'assets/gif/goblet-squad.gif',
       difficulty: 'intermediate',
       description: 'Compound exercise targeting lower body muscles',
       duration: 10,
@@ -65,6 +65,70 @@ export class WorkoutComponent {
       restTime: 90,
       tips: ['Keep your back straight', 'Lower your body slowly'],
       variations: ['Front Squats', 'Sumo Squats'],
+      isExpanded: false
+    },
+    {
+      name: 'Deadlift',
+      imageUrl: 'assets/gif/deadlift.gif',
+      difficulty: 'advanced',
+      description: 'A compound exercise that targets multiple muscle groups, particularly the posterior chain',
+      duration: 15,
+      calories: 250,
+      equipment: ['Barbell', 'Weight Plates'],
+      targetMuscles: ['Back', 'Legs', 'Core'],
+      sets: 4,
+      reps: 8,
+      restTime: 120,
+      tips: ['Keep your back straight', 'Push through your heels', 'Engage your core'],
+      variations: ['Romanian Deadlift', 'Sumo Deadlift', 'Single-leg Deadlift'],
+      isExpanded: false
+    },
+    {
+      name: 'Pull-ups',
+      imageUrl: 'assets/gif/pull-ups.gif',
+      difficulty: 'advanced',
+      description: 'Upper body exercise focusing on back and arm strength',
+      duration: 10,
+      calories: 100,
+      equipment: ['Pull-up Bar'],
+      targetMuscles: ['Back', 'Biceps', 'Shoulders'],
+      sets: 3,
+      reps: 8,
+      restTime: 90,
+      tips: ['Start from a dead hang', 'Pull your chest to the bar', 'Control the descent'],
+      variations: ['Chin-ups', 'Wide-grip Pull-ups', 'Negative Pull-ups'],
+      isExpanded: false
+    },
+    {
+      name: 'Push-ups',
+      imageUrl: 'assets/gif/push-ups.gif',
+      difficulty: 'beginner',
+      description: 'Classic bodyweight exercise for upper body strength',
+      duration: 8,
+      calories: 80,
+      equipment: ['None'],
+      targetMuscles: ['Chest', 'Shoulders', 'Triceps'],
+      sets: 3,
+      reps: 15,
+      restTime: 60,
+      tips: ['Keep your body straight', 'Hands shoulder-width apart', 'Lower chest to ground'],
+      variations: ['Diamond Push-ups', 'Wide Push-ups', 'Incline Push-ups'],
+      isExpanded: false
+    },
+    {
+      name: 'Dumbbell Rows',
+      imageUrl: 'assets/gif/dumbbell-rows.gif',
+      difficulty: 'intermediate',
+      description: 'Unilateral back exercise for strength and muscle development',
+      duration: 12,
+      calories: 150,
+      equipment: ['Dumbbells', 'Bench'],
+      targetMuscles: ['Back', 'Biceps'],
+      sets: 4,
+      reps: 12,
+      restTime: 90,
+      tips: ['Keep your back parallel to ground', 'Pull dumbbell to hip', 'Control the movement'],
+      variations: ['Barbell Rows', 'Meadows Row', 'Pendlay Row'],
       isExpanded: false
     }
     // Add more exercises as needed

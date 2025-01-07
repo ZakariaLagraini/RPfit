@@ -65,7 +65,7 @@ export class WeightLossComponent {
         {
           name: 'Mountain Climbers',
           description: 'Dynamic core exercise that raises heart rate',
-          gifUrl: 'assets/exercises/gifs/mountain-climbers.gif',
+          gifUrl: 'assets/gif/mountain-climbers.gif',
           instructions: [
             'Start in a plank position',
             'Drive one knee toward your chest',
@@ -89,7 +89,7 @@ export class WeightLossComponent {
         {
           name: 'Jump Squats',
           description: 'Explosive lower body exercise',
-          gifUrl: 'assets/exercises/gifs/jump-squats.gif',
+          gifUrl: 'assets/gif/jump-squats.gif',
           instructions: [
             'Stand with feet shoulder-width apart',
             'Lower into a squat position',
@@ -113,7 +113,7 @@ export class WeightLossComponent {
         {
           name: 'Russian Twists',
           description: 'Rotational core exercise',
-          gifUrl: 'assets/exercises/gifs/russian-twists.gif',
+          gifUrl: 'assets/gif/russian-twists.gif',
           instructions: [
             'Sit with knees bent and feet off the ground',
             'Lean back slightly, keeping back straight',

@@ -5,12 +5,14 @@ import com.example.backend.service.WorkoutPlanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/workoutPlans")
+@CrossOrigin(origins = "*") // Add if needed for CORS
 public class WorkoutPlanController {
 
     private final WorkoutPlanService workoutPlanService;
@@ -41,9 +43,14 @@ public class WorkoutPlanController {
 
     // Get all workout plans for a specific client
     @GetMapping("/client/{clientId}")
-    public ResponseEntity<List<WorkoutPlan>> getWorkoutPlansByClientId(@PathVariable Long clientId) {
-        List<WorkoutPlan> workoutPlans = workoutPlanService.getWorkoutPlansByClientId(clientId);
-        return new ResponseEntity<>(workoutPlans, HttpStatus.OK);
+    public ResponseEntity<?> getWorkoutPlansByClientId(@PathVariable String clientId) {
+        try {
+            Long clientIdLong = Long.parseLong(clientId);
+            List<WorkoutPlan> workoutPlans = workoutPlanService.getWorkoutPlansByClientId(clientIdLong);
+            return new ResponseEntity<>(workoutPlans, HttpStatus.OK);
+        } catch (NumberFormatException e) {
+            return new ResponseEntity<>("Invalid client ID format", HttpStatus.BAD_REQUEST);
+        }
     }
 
     // Get a single workout plan by ID
@@ -59,5 +66,20 @@ public class WorkoutPlanController {
     public ResponseEntity<Void> deleteWorkoutPlan(@PathVariable Long id) {
         workoutPlanService.deleteWorkoutPlan(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/exercises/filter")
+    public ResponseEntity<List<WorkoutPlan>> getWorkoutPlansByExercises(
+            @RequestParam List<String> exercises) {
+        List<WorkoutPlan> workoutPlans = workoutPlanService.getWorkoutPlansByExercises(exercises);
+        return new ResponseEntity<>(workoutPlans, HttpStatus.OK);
+    }
+
+    // Add global exception handler for MethodArgumentTypeMismatchException
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<String> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String error = String.format("Failed to convert value '%s' to required type '%s'", 
+            ex.getValue(), ex.getRequiredType().getSimpleName());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }

@@ -27,4 +27,16 @@ class Client {
       weight: json['weight'].toDouble(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'goal': goal,
+      'email': email,
+      if (password != null) 'password': password,
+      'age': age,
+      'height': height,
+      'weight': weight,
+    };
+  }
 }

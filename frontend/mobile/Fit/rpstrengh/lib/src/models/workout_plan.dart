@@ -22,4 +22,13 @@ class WorkoutPlan {
       exercises: exercisesList.map((e) => Exercise.fromJson(e)).toList(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'durationInWeeks': durationInWeeks,
+      'exercises': exercises.map((e) => e.toJson()).toList(),
+    };
+  }
 }

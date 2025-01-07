@@ -37,7 +37,7 @@ export class SignInComponent {
       height: 180,
       fitnessGoal: 'Weight Loss',
       experienceLevel: 'Intermediate',
-      profilePicture: 'assets/default-avatar.png',
+      profilePicture: 'assets/gif/avatar.png',
       joinDate: new Date(),
       preferredTime: 'Morning',
       stats: {

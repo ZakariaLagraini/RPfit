@@ -33,4 +33,33 @@ class WorkoutPlanService {
       rethrow;
     }
   }
+
+  Future<List<WorkoutPlan>> getWorkoutPlansByExercises(
+      List<String> exercises) async {
+    try {
+      final token = await SecureStorage.getToken();
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+
+      final queryParams = exercises.map((e) => 'exercises=$e').join('&');
+      final response = await http.get(
+        Uri.parse('$baseUrl/exercises/filter?$queryParams'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> jsonList = json.decode(response.body);
+        return jsonList.map((json) => WorkoutPlan.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load workout plans: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error in getWorkoutPlansByExercises: $e');
+      rethrow;
+    }
+  }
 }

@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
                     corsConfiguration.setAllowCredentials(true);
-                    corsConfiguration.addAllowedOrigin("http://localhost:60634"); // Allow your Flutter app's origin
+                    corsConfiguration.addAllowedOrigin("http://localhost:50620"); // Allow your Flutter app's origin
                     corsConfiguration.addAllowedHeader("*");
                     corsConfiguration.addAllowedMethod("*");
                     return corsConfiguration;

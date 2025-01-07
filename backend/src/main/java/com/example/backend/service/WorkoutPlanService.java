@@ -35,6 +35,10 @@ public class WorkoutPlanService {
         return null;
     }
 
+    public List<WorkoutPlan> getWorkoutPlansByExercises(List<String> exerciseNames) {
+        return workoutPlanRepository.findByExerciseNamesIn(exerciseNames);
+    }
+
     // Get all workout plans for a specific client
     public List<WorkoutPlan> getWorkoutPlansByClientId(Long clientId) {
         return workoutPlanRepository.findByClientId(clientId);

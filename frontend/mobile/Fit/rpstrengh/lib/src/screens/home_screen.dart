@@ -117,22 +117,65 @@ class _HomeContentState extends State<HomeContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(
+          color: Color.fromARGB(255, 243, 33, 44), // Hamburger menu color
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined),
+            onPressed: () {
+              // Handle notifications
+            },
+          ),
+        ],
+      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
+            const UserAccountsDrawerHeader(
               decoration: BoxDecoration(
                 color: Color.fromARGB(255, 243, 33, 44),
               ),
-              child: Text(
-                'Menu',
+              accountName: Text(
+                'Workout Plans',
                 style: TextStyle(
-                  color: Colors.white,
                   fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              accountEmail: Text(
+                'Your personalized training programs',
+                style: TextStyle(fontSize: 14),
+              ),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(
+                  Icons.fitness_center,
+                  color: Color.fromARGB(255, 243, 33, 44),
+                  size: 30,
                 ),
               ),
             ),
+            // Workout Plans List in Drawer
+            ..._workoutPlans.map((plan) => ListTile(
+                  leading: const Icon(Icons.sports_gymnastics),
+                  title: Text(plan.name),
+                  subtitle: Text('${plan.durationInWeeks} Weeks'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WorkoutScreen(),
+                      ),
+                    );
+                  },
+                )),
+            const Divider(),
             ListTile(
               leading: const Icon(Icons.restaurant_menu),
               title: const Text('Nutrition'),
@@ -175,286 +218,177 @@ class _HomeContentState extends State<HomeContent> {
           ],
         ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Search bar and notification
-                Row(
-                  children: [
-                    Builder(
-                      builder: (context) => IconButton(
-                        icon: const Icon(Icons.menu, size: 24),
-                        onPressed: () => Scaffold.of(context).openDrawer(),
-                      ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Enhanced Welcome Header
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24),
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 243, 33, 44),
+                      Color.fromARGB(255, 255, 87, 95),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.search, color: Colors.grey, size: 20),
-                            SizedBox(width: 8),
-                            Text(
-                              'Search Aaptiv',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    const Icon(Icons.notifications_none, size: 24),
                   ],
                 ),
-
-                const SizedBox(height: 24),
-
-                // Workout categories title
-                const Text(
-                  'Workout categories',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // Categories grid
-                _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : GridView.count(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                        childAspectRatio: 1.5,
-                        children: _workoutPlans.map((plan) {
-                          return WorkoutCategoryCard(
-                            title: plan.name.toUpperCase(),
-                            subtitle: '${plan.durationInWeeks} WEEKS',
-                            imagePath:
-                                'assets/images/body.jpg', // You might want to add image URL to your model
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const WorkoutScreen(),
-                                ),
-                              );
-                            },
-                          );
-                        }).toList(),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Icons.fitness_center,
+                        color: Color.fromARGB(255, 243, 33, 44),
+                        size: 30,
                       ),
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'Welcome back!',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Ready to crush your workout today?',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-                const SizedBox(height: 24),
-
-                // Programs section
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Quick Actions Section
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Programs for you',
+                      'Quick Actions',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'See all >',
-                        style:
-                            TextStyle(color: Color.fromARGB(255, 243, 33, 51)),
-                      ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildQuickActionCard(
+                          context,
+                          icon: Icons.fitness_center,
+                          title: 'Start\nWorkout',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WorkoutScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildQuickActionCard(
+                          context,
+                          icon: Icons.restaurant_menu,
+                          title: 'View\nNutrition',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NutritionScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildQuickActionCard(
+                          context,
+                          icon: Icons.person,
+                          title: 'My\nProfile',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ProfileScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 16),
-
-                // Programs horizontal list
-                SizedBox(
-                  height: 180,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: const [
-                      ProgramCard(
-                        title: 'Total Body Training',
-                        trainer: 'with Ackeem',
-                        imagePath: 'assets/images/challenge_fullbody.jpg',
-                      ),
-                      SizedBox(width: 12),
-                      ProgramCard(
-                        title: 'Cross-Training to 5K',
-                        trainer: 'with Meg',
-                        imagePath: 'assets/images/abs.jpg',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
-}
 
-class WorkoutCategoryCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String imagePath;
-  final VoidCallback onTap;
-
-  const WorkoutCategoryCard({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.imagePath,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildQuickActionCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Stack(
-          fit: StackFit.expand,
+      child: Container(
+        width: 100,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
+            Icon(
+              icon,
+              size: 30,
+              color: const Color.fromARGB(255, 243, 33, 44),
             ),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.7),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
+            const SizedBox(height: 8),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class ProgramCard extends StatelessWidget {
-  final String title;
-  final String trainer;
-  final String imagePath;
-
-  const ProgramCard({
-    super.key,
-    required this.title,
-    required this.trainer,
-    required this.imagePath,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 260,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: const Color.fromARGB(255, 55, 26, 26),
-      ),
-      child: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              imagePath,
-              width: 260,
-              height: 180,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'PROGRAM',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  trainer,
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

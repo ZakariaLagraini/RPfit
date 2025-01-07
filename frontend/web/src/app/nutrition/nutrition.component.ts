@@ -37,7 +37,7 @@ export class NutritionComponent {
       protein: 25,
       carbs: 45,
       fats: 20,
-      image: 'assets/images/breakfast.jpg',
+      image: 'https://images.immediate.co.uk/production/volatile/sites/30/2017/08/smoothie-bowl-3a8632c.jpg?quality=90&resize=556,505',
       foods: [
         { name: 'Oatmeal', portion: '1 cup', calories: 150, icon: 'fa-bowl-food' },
         { name: 'Banana', portion: '1 medium', calories: 105, icon: 'fa-apple-whole' },
@@ -52,7 +52,7 @@ export class NutritionComponent {
       protein: 40,
       carbs: 65,
       fats: 25,
-      image: 'assets/images/lunch.jpg',
+      image: 'https://kutv.com/resources/media/6b7a7c7c-3c44-489c-9880-4a17508cdc6d-large16x9_Postworkout_meal.jpg?1577802416711',
       foods: [
         { name: 'Grilled Chicken', portion: '6 oz', calories: 280, icon: 'fa-drumstick-bite' },
         { name: 'Brown Rice', portion: '1 cup', calories: 216, icon: 'fa-bowl-rice' },
@@ -66,7 +66,7 @@ export class NutritionComponent {
       protein: 35,
       carbs: 50,
       fats: 22,
-      image: 'assets/images/dinner.jpg',
+      image: 'https://media.self.com/photos/582e09e73ab10950129051ef/master/w_1600%2Cc_limit/Westend61-GettyImages-681908513.jpg',
       foods: [
         { name: 'Salmon', portion: '6 oz', calories: 354, icon: 'fa-fish' },
         { name: 'Sweet Potato', portion: '1 medium', calories: 103, icon: 'fa-potato' },

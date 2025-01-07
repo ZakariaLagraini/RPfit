@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../services/client_service.dart';
 import 'package:rpstrengh/src/models/client.dart';
+import 'edit_profile_screen.dart';
+import 'settings_screen.dart';
+import 'help_support_screen.dart';
 // import '../services/secure_storage.dart'; Import SecureStorage if needed
 
 class ProfileScreen extends StatefulWidget {
@@ -214,19 +217,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _buildActionButton(
             'Edit Profile',
             Icons.edit,
-            () {/* TODO: Implement edit profile */},
+            () async {
+              final currentClient = await _profileFuture;
+              if (!mounted) return;
+
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      EditProfileScreen(client: currentClient),
+                ),
+              );
+              if (result == true) {
+                setState(() {
+                  _profileFuture = ClientService().getProfile();
+                });
+              }
+            },
           ),
           const SizedBox(height: 10),
           _buildActionButton(
             'Settings',
             Icons.settings,
-            () {/* TODO: Implement settings */},
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
           ),
           const SizedBox(height: 10),
           _buildActionButton(
             'Help & Support',
             Icons.help_outline,
-            () {/* TODO: Implement help & support */},
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HelpSupportScreen(),
+                ),
+              );
+            },
           ),
         ],
       ),
